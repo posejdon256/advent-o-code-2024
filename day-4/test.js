@@ -55,15 +55,11 @@ const findX_Mas = (lines, ind = { x: 0, y: 0 }) => {
   if (lines[x][y] !== "A") {
     return 0;
   }
-  const aroundArray = [lines[x + 1][y + 1], lines[x - 1][y + 1], lines[x - 1][y - 1], lines[x + 1][y - 1]];
-  if (aroundArray.filter((x) => x === "M")?.length !== 2 || aroundArray.filter((x) => x === "S")?.length !== 2) {
-    return 0;
+  const wordAround = lines[x + 1][y + 1] + lines[x - 1][y + 1] + lines[x - 1][y - 1] + lines[x + 1][y - 1];
+  if (["MMSS", "SMMS", "SSMM", "MSSM"].includes(wordAround)) {
+    return 1;
   }
-  const aroundWord = aroundArray[0] + aroundArray[1] + aroundArray[2] + aroundArray[3];
-  if (aroundWord === "MSMS" || aroundWord === "SMSM") {
-    return 0;
-  }
-  return 1;
+  return 0;
 };
 
 const part2 = async () => {
