@@ -27,7 +27,6 @@ const part1 = async () => {
     res.forEach((mul) => {
       const mulCut = mul.slice(4, mul.length - 1);
       const nums = mulCut.split(",").map((x) => parseInt(x));
-      console.log("Nums", nums);
       sum += nums[0] * nums[1];
     });
   });
@@ -50,7 +49,6 @@ const part2 = async () => {
       const firstMul = regex.exec(line);
       const firstDo = doReg.exec(line);
       const firstDont = dontReg.exec(line);
-      console.log(firstDo?.index, firstDont?.index, firstMul?.index);
 
       if (!firstDo && !firstDont && !firstMul) {
         break;
