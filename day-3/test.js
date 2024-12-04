@@ -27,6 +27,7 @@ const part1 = async () => {
     res.forEach((mul) => {
       const mulCut = mul.slice(4, mul.length - 1);
       const nums = mulCut.split(",").map((x) => parseInt(x));
+
       sum += nums[0] * nums[1];
     });
   });
@@ -54,16 +55,10 @@ const part2 = async () => {
         break;
       }
 
-      if (
-        (firstDo?.index < firstDont?.index || firstDont === null) &&
-        (firstDo?.index < firstMul?.index || firstMul === null)
-      ) {
+      if ((firstDo?.index < firstDont?.index || firstDont === null) && (firstDo?.index < firstMul?.index || firstMul === null)) {
         doFlag = true;
         line = line.slice(firstDo.index + firstDo[0].length, line.length);
-      } else if (
-        (firstDont?.index < firstDo?.index || firstDo === null) &&
-        (firstDont?.index < firstMul?.index || firstMul === null)
-      ) {
+      } else if ((firstDont?.index < firstDo?.index || firstDo === null) && (firstDont?.index < firstMul?.index || firstMul === null)) {
         doFlag = false;
         line = line.slice(firstDont.index + firstDont[0].length, line.length);
       } else {

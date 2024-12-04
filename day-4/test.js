@@ -20,12 +20,7 @@ const getInputs = async (testString) => {
 
 const XMAS = ["X", "M", "A", "S"];
 
-const findXMAS = (
-  lines = [["X"]],
-  ind = { x: 0, y: 0 },
-  step = 0,
-  direction = { x: 1, y: 0 }
-) => {
+const findXMAS = (lines = [["X"]], ind = { x: 0, y: 0 }, step = 0, direction = { x: 1, y: 0 }) => {
   const { x, y } = ind;
   const letter = XMAS[step];
   if (!lines?.[x]?.[y] || lines[x][y] !== letter) {
@@ -34,12 +29,7 @@ const findXMAS = (
   if (step === 3 && lines[x][y] === letter) {
     return 1;
   }
-  return findXMAS(
-    lines,
-    { x: x + direction.x, y: y + direction.y },
-    step + 1,
-    direction
-  );
+  return findXMAS(lines, { x: x + direction.x, y: y + direction.y }, step + 1, direction);
 };
 
 const part1 = async () => {
@@ -65,20 +55,11 @@ const findX_Mas = (lines, ind = { x: 0, y: 0 }) => {
   if (lines[x][y] !== "A") {
     return 0;
   }
-  const aroundArray = [
-    lines[x + 1][y + 1],
-    lines[x - 1][y + 1],
-    lines[x - 1][y - 1],
-    lines[x + 1][y - 1],
-  ];
-  if (
-    aroundArray.filter((x) => x === "M")?.length !== 2 ||
-    aroundArray.filter((x) => x === "S")?.length !== 2
-  ) {
+  const aroundArray = [lines[x + 1][y + 1], lines[x - 1][y + 1], lines[x - 1][y - 1], lines[x + 1][y - 1]];
+  if (aroundArray.filter((x) => x === "M")?.length !== 2 || aroundArray.filter((x) => x === "S")?.length !== 2) {
     return 0;
   }
-  const aroundWord =
-    aroundArray[0] + aroundArray[1] + aroundArray[2] + aroundArray[3];
+  const aroundWord = aroundArray[0] + aroundArray[1] + aroundArray[2] + aroundArray[3];
   if (aroundWord === "MSMS" || aroundWord === "SMSM") {
     return 0;
   }

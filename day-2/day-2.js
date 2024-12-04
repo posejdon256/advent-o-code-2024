@@ -32,10 +32,7 @@ const part1 = async () => {
       if (report[j] < report[j + 1] && !increasing) {
         break;
       }
-      if (
-        Math.abs(report[j] - report[j + 1]) > 3 ||
-        Math.abs(report[j] - report[j + 1]) === 0
-      ) {
+      if (Math.abs(report[j] - report[j + 1]) > 3 || Math.abs(report[j] - report[j + 1]) === 0) {
         break;
       }
       if (j === report.length - 2) {
@@ -54,10 +51,7 @@ const isStepOkay = (report, j, increasing) => {
   if (report[j] < report[j + 1] && !increasing) {
     return false;
   }
-  if (
-    Math.abs(report[j] - report[j + 1]) > 3 ||
-    Math.abs(report[j] - report[j + 1]) === 0
-  ) {
+  if (Math.abs(report[j] - report[j + 1]) > 3 || Math.abs(report[j] - report[j + 1]) === 0) {
     return false;
   }
   return true;
