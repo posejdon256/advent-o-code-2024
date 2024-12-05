@@ -16,19 +16,24 @@ const getInputs = async (testString) => {
 
 const part1 = async () => {
   const { lines } = await getInputs("test.txt");
+  return 0;
 };
 
 const part2 = async () => {
   const { lines } = await getInputs("test2.txt");
+  return 0;
 };
 
 const main = async () => {
-  console.time("Test 1");
-  console.log("Result 1", await part1());
-  console.timeEnd("Test 1");
-  console.time("Test 2");
-  console.log("Result 2", await part2());
-  console.timeEnd("Test 2");
+  console.time("Time 1");
+  const part1Val = await part1();
+  console.timeEnd("Time 1");
+  console.log("Part 1", part1Val);
+
+  console.time("Time 2");
+  const part2Val = await part2();
+  console.timeEnd("Time 2");
+  console.log("Part 2", part2Val);
 };
 
 main();
