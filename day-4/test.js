@@ -33,6 +33,7 @@ const findXMAS = (lines = [["X"]], ind = { x: 0, y: 0 }, step = 0, direction = {
 };
 
 const part1 = async () => {
+  console.time("test");
   const { lines } = await getInputs("test-2.txt");
   let xmases = 0;
   for (let i = 0; i < lines.length; i++) {
@@ -48,6 +49,7 @@ const part1 = async () => {
     }
   }
   console.log("Xmas", xmases);
+  console.timeEnd("test");
 };
 
 const findX_Mas = (lines, ind = { x: 0, y: 0 }) => {
@@ -63,6 +65,7 @@ const findX_Mas = (lines, ind = { x: 0, y: 0 }) => {
 };
 
 const part2 = async () => {
+  console.time("test");
   const { lines } = await getInputs("test2-2.txt");
   let xmases = 0;
   for (let i = 1; i < lines.length - 1; i++) {
@@ -71,6 +74,7 @@ const part2 = async () => {
     }
   }
   console.log("Xmas", xmases);
+  console.timeEnd("test");
 };
 
-part2();
+part1();

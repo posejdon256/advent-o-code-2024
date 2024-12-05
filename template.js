@@ -22,4 +22,13 @@ const part2 = async () => {
   const { lines } = await getInputs("test2.txt");
 };
 
-part1();
+const main = async () => {
+  console.time("Test 1");
+  console.log("Result 1", await part1());
+  console.timeEnd("Test 1");
+  console.time("Test 2");
+  console.log("Result 2", await part2());
+  console.timeEnd("Test 2");
+};
+
+main();

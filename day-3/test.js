@@ -18,6 +18,7 @@ const getInputs = async (testString) => {
 };
 
 const part1 = async () => {
+  console.time("test");
   const { lines } = await getInputs("text-2.txt");
   let sum = 0;
   const regex = /mul\([0-9][0-9]*[0-9]*,[0-9][0-9]*[0-9]*\)/g;
@@ -32,9 +33,11 @@ const part1 = async () => {
     });
   });
   console.log("Sum", sum);
+  console.timeEnd("test");
 };
 
 const part2 = async () => {
+  console.time("test");
   const { lines } = await getInputs("text2-2.txt");
   let sum = 0;
   const results = [];
@@ -73,6 +76,7 @@ const part2 = async () => {
     }
   });
   console.log("Sum", sum);
+  console.timeEnd("test");
 };
 
-part2();
+part1();

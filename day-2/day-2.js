@@ -20,6 +20,7 @@ const getInputs = async (testString) => {
 };
 
 const part1 = async () => {
+  console.time("test");
   const { reports } = await getInputs("test2.txt");
   let safe = 0;
   for (let i = 0; i < reports.length; i++) {
@@ -36,12 +37,13 @@ const part1 = async () => {
         break;
       }
       if (j === report.length - 2) {
-        console.log("Safe in for", report);
+        // console.log("Safe in for", report);
         safe++;
       }
     }
   }
   console.log("Safe", safe);
+  console.timeEnd("test");
 };
 
 const isStepOkay = (report, j, increasing) => {
@@ -72,6 +74,7 @@ const checkReport = (report) => {
 };
 
 const part2 = async () => {
+  console.time("test");
   const { reports } = await getInputs("test-2.txt");
   let safe = 0;
   for (let i = 0; i < reports.length; i++) {
@@ -90,6 +93,7 @@ const part2 = async () => {
     }
   }
   console.log("Safe", safe);
+  console.timeEnd("test");
 };
 
-part2();
+part1();

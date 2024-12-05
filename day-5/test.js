@@ -35,6 +35,7 @@ const isOrderOk = (order = [1], orderMap = { 10: [1] }) => {
 };
 
 const part1 = async () => {
+  console.time("test");
   const { orderMap, prints } = await getInputs("test-2.txt");
   let sum = 0;
   prints.forEach((print) => {
@@ -43,18 +44,20 @@ const part1 = async () => {
     }
   });
   console.log(sum);
+  console.timeEnd("test");
 };
 
 const fixOrder = (order = [1], orderMap = { 10: [1] }) => {
-  let i = 0;
+  let i = 1;
   const orderCopy = [...order];
   while (i !== orderCopy.length) {
     const element = orderCopy[i];
     const orderBeforeCrrent = orderCopy.slice(0, i);
+    // console.log(orderCopy);
     if (orderBeforeCrrent.find((x) => orderMap[element]?.some((y) => x === y))) {
       orderCopy.splice(i, 1);
-      orderCopy.splice(0, 0, element);
-      i = 0;
+      orderCopy.splice(i - 1, 0, element);
+      i--;
     } else {
       i++;
     }
@@ -63,6 +66,7 @@ const fixOrder = (order = [1], orderMap = { 10: [1] }) => {
 };
 
 const part2 = async () => {
+  console.time("test");
   const { orderMap, prints } = await getInputs("test-2.txt");
   let sum = 0;
   prints.forEach((print) => {
@@ -73,6 +77,7 @@ const part2 = async () => {
     }
   });
   console.log(sum);
+  console.timeEnd("test");
 };
 
-part2();
+part1();
