@@ -32,20 +32,27 @@ const findXMAS = (lines = [["X"]], ind = { x: 0, y: 0 }, step = 0, direction = {
   return findXMAS(lines, { x: x + direction.x, y: y + direction.y }, step + 1, direction);
 };
 
+const getCombinations = () => {
+  const ret = [];
+  for (let i = -1; i <= 1; i++) {
+    for (let j = -1; j <= 1; j++) {
+      ret.push({ x: i, y: j });
+    }
+  }
+  // console.log(ret);
+  return ret;
+};
+
 const part1 = async () => {
   console.time("test");
   const { lines } = await getInputs("test-2.txt");
   let xmases = 0;
+  const combinations = getCombinations();
   for (let i = 0; i < lines.length; i++) {
     for (let j = 0; j < lines[i].length; j++) {
-      xmases += findXMAS(lines, { x: i, y: j }, 0, { x: 1, y: 0 });
-      xmases += findXMAS(lines, { x: i, y: j }, 0, { x: 1, y: 1 });
-      xmases += findXMAS(lines, { x: i, y: j }, 0, { x: 0, y: 1 });
-      xmases += findXMAS(lines, { x: i, y: j }, 0, { x: -1, y: 1 });
-      xmases += findXMAS(lines, { x: i, y: j }, 0, { x: -1, y: 0 });
-      xmases += findXMAS(lines, { x: i, y: j }, 0, { x: -1, y: -1 });
-      xmases += findXMAS(lines, { x: i, y: j }, 0, { x: 0, y: -1 });
-      xmases += findXMAS(lines, { x: i, y: j }, 0, { x: 1, y: -1 });
+      combinations.forEach((combination) => {
+        xmases += findXMAS(lines, { x: i, y: j }, 0, combination);
+      });
     }
   }
   console.timeEnd("test");
@@ -77,4 +84,4 @@ const part2 = async () => {
   console.log("Xmas", xmases);
 };
 
-part2();
+part1();
