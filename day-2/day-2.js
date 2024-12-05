@@ -42,8 +42,8 @@ const part1 = async () => {
       }
     }
   }
-  console.log("Safe", safe);
   console.timeEnd("test");
+  console.log("Safe", safe);
 };
 
 const isStepOkay = (report, j, increasing) => {
@@ -92,8 +92,8 @@ const part2 = async () => {
       }
     }
   }
-  console.log("Safe", safe);
   console.timeEnd("test");
+  console.log("Safe", safe);
 };
 
-part1();
+part2();

@@ -31,8 +31,8 @@ const part1 = async () => {
   for (let i = 0; i < left.length; i++) {
     sum += Math.abs(right[i] - left[i]);
   }
-  console.log("Sum", sum);
   console.timeEnd("test");
+  console.log("Sum", sum);
 };
 
 const part2 = async () => {
@@ -50,8 +50,9 @@ const part2 = async () => {
     sum += buckets[left[i]];
     // buckets[left[i]] = 0;
   }
-  console.log(sum);
   console.timeEnd("test");
+  console.log(sum);
 };
 
 part2();
+//part2();

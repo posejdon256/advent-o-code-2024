@@ -43,8 +43,8 @@ const part1 = async () => {
       sum += print[Math.floor(print.length / 2)];
     }
   });
-  console.log(sum);
   console.timeEnd("test");
+  console.log(sum);
 };
 
 const fixOrder = (order = [1], orderMap = { 10: [1] }) => {
@@ -76,8 +76,8 @@ const part2 = async () => {
       sum += printCopy[Math.floor(printCopy.length / 2)];
     }
   });
-  console.log(sum);
   console.timeEnd("test");
+  console.log(sum);
 };
 
-part1();
+part2();

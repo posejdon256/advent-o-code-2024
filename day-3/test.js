@@ -32,8 +32,8 @@ const part1 = async () => {
       sum += nums[0] * nums[1];
     });
   });
-  console.log("Sum", sum);
   console.timeEnd("test");
+  console.log("Sum", sum);
 };
 
 const part2 = async () => {
@@ -75,8 +75,8 @@ const part2 = async () => {
       }
     }
   });
-  console.log("Sum", sum);
   console.timeEnd("test");
+  console.log("Sum", sum);
 };
 
-part1();
+part2();

@@ -48,8 +48,8 @@ const part1 = async () => {
       xmases += findXMAS(lines, { x: i, y: j }, 0, { x: 1, y: -1 });
     }
   }
-  console.log("Xmas", xmases);
   console.timeEnd("test");
+  console.log("Xmas", xmases);
 };
 
 const findX_Mas = (lines, ind = { x: 0, y: 0 }) => {
@@ -73,8 +73,8 @@ const part2 = async () => {
       xmases += findX_Mas(lines, { x: i, y: j });
     }
   }
-  console.log("Xmas", xmases);
   console.timeEnd("test");
+  console.log("Xmas", xmases);
 };
 
-part1();
+part2();
