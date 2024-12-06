@@ -6,24 +6,117 @@ const getInputs = async (testString) => {
     input: fs.createReadStream(testString),
     crlfDelay: Infinity,
   });
-
-  const lines = [];
+  let startingPoint = { x: 0, y: 0 };
+  let i = 0;
+  const labMap = [];
   for await (const line of rl) {
-    lines.push(line);
+    labMap.push(line.split(""));
+    const j = labMap[i].findIndex((x) => x === "^");
+    if (j !== -1) {
+      startingPoint.y = i;
+      startingPoint.x = j;
+    }
+    i++;
   }
-  return { lines };
+  return { labMap, startingPoint };
+};
+
+const directionsMap = {
+  0: { x: 0, y: -1 },
+  1: { x: 1, y: 0 },
+  2: { x: 0, y: 1 },
+  3: { x: -1, y: 0 },
+};
+
+const goGoGo = (directionIndex = 0, position = { x: 0, y: 0 }, labMap = [["^"]]) => {
+  let direction = directionsMap[directionIndex];
+  const newPosition = { x: position.x + direction.x, y: position.y + direction.y };
+  if (newPosition.x < 0 || newPosition.y < 0 || newPosition.x > labMap.length - 1 || newPosition.y > labMap[0].length - 1) {
+    return true;
+  }
+  if (labMap[newPosition.y][newPosition.x] === "#" || labMap[newPosition.y][newPosition.x] === "O") {
+    return false;
+  }
+  let walk = goGoGo(directionIndex, newPosition, labMap);
+  while (!walk) {
+    directionIndex++;
+    walk = goGoGo(directionIndex % 4, newPosition, labMap);
+  }
+  labMap[newPosition.y][newPosition.x] = "X";
+  return true;
 };
 
 const part1 = async () => {
-  const { lines } = await getInputs("test.txt");
-  return 0;
+  const { labMap, startingPoint } = await getInputs("test2.txt");
+  goGoGo(0, startingPoint, labMap);
+  let sum = 0;
+  for (let i = 0; i < labMap[0].length; i++) {
+    for (let j = 0; j < labMap.length; j++) {
+      if (labMap[j][i] === "X") {
+        sum++;
+      }
+    }
+  }
+  return sum;
+};
+
+const RESULTS = {
+  LOOP: "loop",
+  END: "end",
+  OBSTACLE: "obstacle",
+};
+
+const goGoGoV2 = (directionIndex = 0, startingPoint = { x: 0, y: 0 }, labMap = [["^"]]) => {
+  const stack = [];
+  stack.push({ directionIndex, position: startingPoint, labMap });
+  while (stack.length > 0) {
+    let { directionIndex, position, labMap } = stack[stack.length - 1];
+    let direction = directionsMap[directionIndex];
+    const newPosition = { x: position.x + direction.x, y: position.y + direction.y };
+    if (newPosition.x < 0 || newPosition.y < 0 || newPosition.x > labMap.length - 1 || newPosition.y > labMap[0].length - 1) {
+      return RESULTS.END;
+    }
+    if (labMap[newPosition.y][newPosition.x] === directionIndex) {
+      return RESULTS.LOOP;
+    }
+    if (labMap[newPosition.y][newPosition.x] === "#" || labMap[newPosition.y][newPosition.x] === "O") {
+      directionIndex = (directionIndex + 1) % 4;
+      const prev = stack[stack.length - 1];
+      stack.splice(stack.length - 1, 2);
+      stack.push({ directionIndex: directionIndex, position: prev?.position || startingPoint, labMap });
+    } else {
+      stack.push({ directionIndex, position: newPosition, labMap });
+      labMap[newPosition.y][newPosition.x] = directionIndex;
+    }
+  }
+};
+
+const cloneArray = (labMap = [["^"]]) => {
+  const clone = [];
+  for (let i = 0; i < labMap.length; i++) {
+    clone.push([...labMap[i]]);
+  }
+  return clone;
 };
 
 const part2 = async () => {
-  const { lines } = await getInputs("test2.txt");
-  return 0;
+  const { labMap, startingPoint } = await getInputs("test2.txt");
+  goGoGo(0, startingPoint, labMap);
+  let sum = 0;
+  for (let i = 0; i < labMap[0].length; i++) {
+    for (let j = 0; j < labMap.length; j++) {
+      if (labMap[j][i] === "X" && (i !== startingPoint.x || j !== startingPoint.y)) {
+        const labMapCopy = cloneArray(labMap);
+        labMapCopy[j][i] = "O";
+        const res = goGoGoV2(0, startingPoint, labMapCopy, 0);
+        if (res === RESULTS.LOOP) {
+          sum++;
+        }
+      }
+    }
+  }
+  return sum;
 };
-
 const main = async () => {
   console.time("Time 1");
   const part1Val = await part1();
