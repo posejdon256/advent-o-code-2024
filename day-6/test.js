@@ -71,9 +71,6 @@ const goGoGoV2 = (directionIndex = 0, startingPoint = { x: 0, y: 0 }, labMap = [
 
   let i = 0;
   while (true) {
-    if (i > 10000) {
-      console.log(directionIndex, position);
-    }
     let direction = directionsMap[directionIndex];
     let newPosition = { x: position.x + direction.x, y: position.y + direction.y };
     if (newPosition.x < 0 || newPosition.y < 0 || newPosition.x > labMap.length - 1 || newPosition.y > labMap[0].length - 1) {
