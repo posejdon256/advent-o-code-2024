@@ -34,6 +34,8 @@ const permute = (arrLen, depth, i = 0, combs = [[OPERATIONS[0]]]) => {
 
 const part1 = async () => {
   const { lines } = await getInputs("test2.txt");
+  let permutationsPreCalculated = new Array(12).fill(1).map((x, ind) => permute(ind, 0, 0, []).concat(permute(ind, 0, 1, [])));
+  //console.log(permutationsPreCalculated);
   let sum = 0;
   for (let i = 0; i < lines.length; i++) {
     let found = false;
@@ -43,9 +45,9 @@ const part1 = async () => {
       .split(" ")
       .map((x) => parseInt(x))
       .filter((x) => !isNaN(x));
-    const permutations = permute(numbers.length - 2, 0, 0, []).concat(permute(numbers.length - 2, 0, 1, []));
-    console.log(numbers, permutations[0].length);
-
+    //console.log(numbers.length);
+    const permutations = permutationsPreCalculated[numbers.length - 2];
+    //console.log(permutations);
     permutations.forEach((permutation) => {
       const equationArray = [];
       for (let j = 0; j < numbers.length; j++) {
@@ -54,11 +56,14 @@ const part1 = async () => {
           equationArray.push(permutation[j]);
         }
       }
-      let sumInd = equationArray.findIndex((x) => x === OPERATIONS[0] || x === OPERATIONS[1]);
-      while (sumInd !== -1) {
-        const newMulValue = equationArray[sumInd](equationArray[sumInd - 1], equationArray[sumInd + 1]);
-        equationArray.splice(sumInd - 1, 3, newMulValue);
-        sumInd = equationArray.findIndex((x) => x === OPERATIONS[0] || x === OPERATIONS[1]);
+      let ind = equationArray.findIndex((x) => x === OPERATIONS[0] || x === OPERATIONS[1]);
+      while (ind !== -1) {
+        const newMulValue = equationArray[ind](equationArray[ind - 1], equationArray[ind + 1]);
+        equationArray.splice(ind - 1, 3, newMulValue);
+        ind = equationArray.findIndex((x) => x === OPERATIONS[0] || x === OPERATIONS[1]);
+        if (equationArray[0] > result) {
+          break;
+        }
       }
       if (equationArray[0] === result) {
         found = true;
@@ -72,8 +77,8 @@ const part1 = async () => {
 };
 
 const part2 = async () => {
-  console.log(OPERATIONS[2](15, 6));
   const { lines } = await getInputs("test2.txt");
+  let permutationsPreCalculated = new Array(12).fill(1).map((x, ind) => permute(ind, 0, 0, []).concat(permute(ind, 0, 1, []).concat(permute(ind, 0, 2, []))));
   let sum = 0;
   for (let i = 0; i < lines.length; i++) {
     let found = false;
@@ -83,9 +88,7 @@ const part2 = async () => {
       .split(" ")
       .map((x) => parseInt(x))
       .filter((x) => !isNaN(x));
-    const permutations = permute(numbers.length - 2, 0, 0, [])
-      .concat(permute(numbers.length - 2, 0, 1, []))
-      .concat(permute(numbers.length - 2, 0, 2, []));
+    const permutations = permutationsPreCalculated[numbers.length - 2];
     permutations.forEach((permutation) => {
       const equationArray = [];
       for (let j = 0; j < numbers.length; j++) {
@@ -94,11 +97,14 @@ const part2 = async () => {
           equationArray.push(permutation[j]);
         }
       }
-      let sumInd = equationArray.findIndex((x) => x === OPERATIONS[0] || x === OPERATIONS[1] || x === OPERATIONS[2]);
-      while (sumInd !== -1) {
-        const newMulValue = equationArray[sumInd](equationArray[sumInd - 1], equationArray[sumInd + 1]);
-        equationArray.splice(sumInd - 1, 3, newMulValue);
-        sumInd = equationArray.findIndex((x) => x === OPERATIONS[0] || x === OPERATIONS[1] || x === OPERATIONS[2]);
+      let ind = equationArray.findIndex((x) => x === OPERATIONS[0] || x === OPERATIONS[1] || x === OPERATIONS[2]);
+      while (ind !== -1) {
+        const newMulValue = equationArray[ind](equationArray[ind - 1], equationArray[ind + 1]);
+        equationArray.splice(ind - 1, 3, newMulValue);
+        ind = equationArray.findIndex((x) => x === OPERATIONS[0] || x === OPERATIONS[1] || x === OPERATIONS[2]);
+        if (equationArray[0] > result) {
+          break;
+        }
       }
       if (equationArray[0] === result) {
         found = true;
@@ -113,9 +119,9 @@ const part2 = async () => {
 
 const main = async () => {
   console.time("Time 1");
-  //const part1Val = await part1();
+  const part1Val = await part1();
   console.timeEnd("Time 1");
-  // console.log("Part 1", part1Val);
+  console.log("Part 1", part1Val);
 
   console.time("Time 2");
   const part2Val = await part2();
