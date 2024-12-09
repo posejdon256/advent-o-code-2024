@@ -14,6 +14,7 @@ const unit1 = () => {
 };
 
 const checkUnits = () => {
+  console.log("--------------------Unit Tests---------------------");
   const units = [unit1];
   units.forEach((unit) => {
     const { result, name } = unit();
