@@ -64,29 +64,50 @@ const part1 = async () => {
   return summing(filledArr);
 };
 
-const fillArrV2 = (dotsArr = [".", "2"]) => {
-  let leftPointer = 0;
-  let rightPointer = dotsArr.length - 1;
-  while (leftPointer !== rightPointer) {
-    if (dotsArr[leftPointer] === ".") {
-      if (dotsArr[rightPointer] !== ".") {
-        dotsArr[leftPointer] = dotsArr[rightPointer];
-        dotsArr[rightPointer] = ".";
-        leftPointer++;
-      }
-      rightPointer--;
-    } else {
-      leftPointer++;
+const findBlockToMove = (arr = [2, "."], id = 9) => {
+  const place = arr.findIndex((x) => x === id);
+  const size = arr.filter((x) => x === id)?.length;
+  return { place, size };
+};
+const findEmptyBlock = (arr = ["2", "."], leftPointer = 0, rightPointer = 10, minSize = 10) => {
+  let emptyBlock = false;
+  let size = 0;
+  while (rightPointer > leftPointer) {
+    if (arr[leftPointer] === "." && !emptyBlock) {
+      emptyBlock = true;
     }
+    if (arr[leftPointer] === ".") {
+      size++;
+      if (emptyBlock && size >= minSize) {
+        return { leftPointer: leftPointer - size + 1, emptyBlock };
+      }
+    } else if (emptyBlock) {
+      emptyBlock = false;
+      size = 0;
+    }
+    leftPointer++;
   }
-  return dotsArr;
+  return { leftPointer, emptyBlock: false };
 };
 
 const part2 = async () => {
-  const line = await getInputs("test.txt");
+  const line = await getInputs("test2.txt");
   const dotsArr = getDotsArray(line);
-  const filledArr = fillArr(dotsArr);
-  return summing(filledArr);
+  let max = Math.max(...dotsArr.filter((x) => x !== "."));
+  while (max !== -1) {
+    const blockToMove = findBlockToMove(dotsArr, max);
+    if (blockToMove.place !== -1) {
+      const emptyBlock = findEmptyBlock(dotsArr, 0, blockToMove.place, blockToMove.size);
+      if (emptyBlock.emptyBlock) {
+        for (let i = 0; i < blockToMove.size; i++) {
+          dotsArr[emptyBlock.leftPointer + i] = max;
+          dotsArr[blockToMove.place + i] = ".";
+        }
+      }
+    }
+    max--;
+  }
+  return summing(dotsArr);
 };
 
 const main = async () => {
@@ -105,6 +126,8 @@ module.exports = {
   getDotsArray,
   fillArr,
   summing,
+  findBlockToMove,
+  findEmptyBlock,
 };
 
 main();
