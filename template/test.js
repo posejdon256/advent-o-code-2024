@@ -1,5 +1,6 @@
 const readline = require("readline");
 const fs = require("fs");
+const { checkUnits } = require("./unit-tests");
 
 const getInputs = async (testString) => {
   const rl = readline.createInterface({
@@ -25,6 +26,8 @@ const part2 = async () => {
 };
 
 const main = async () => {
+  checkUnits();
+
   console.time("Time 1");
   const part1Val = await part1();
   console.timeEnd("Time 1");
