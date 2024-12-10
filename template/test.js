@@ -1,7 +1,6 @@
 const readline = require("readline");
 const fs = require("fs");
 const { checkUnits } = require("./unit-tests");
-const { fun1 } = require("./solution");
 
 const getInputs = async (testString) => {
   const rl = readline.createInterface({
