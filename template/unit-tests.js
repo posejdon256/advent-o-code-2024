@@ -22,7 +22,7 @@ const units = [
 ];
 
 const checkUnits = () => {
-  console.log("--------------------Unit Tests---------------------");
+  console.log("---------------------Unit Tests----------------------");
   units.forEach((unit) => {
     const { result, name } = unit;
     console.log(name, result);
