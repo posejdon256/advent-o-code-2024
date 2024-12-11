@@ -36,7 +36,7 @@ const part2 = async () => {
     sum += blinkIntoDepth(0, calculated, max, numbers[i]);
   }
   return sum;
-}; //241651071960597
+};
 
 const main = async () => {
   console.time("Time 1");
