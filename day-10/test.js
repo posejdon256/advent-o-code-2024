@@ -32,7 +32,7 @@ const part1 = async () => {
 };
 
 const part2 = async () => {
-  const { lines } = await getInputs("test2.txt");
+  const { lines } = await getInputs("test.txt");
   let sum = 0;
   for (let i = 0; i < lines.length; i++) {
     for (let j = 0; j < lines[0].length; j++) {

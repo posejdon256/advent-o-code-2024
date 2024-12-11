@@ -1,7 +1,6 @@
 const readline = require("readline");
 const fs = require("fs");
 const { checkUnits } = require("./unit-tests");
-const { blink, blinkIntoDepth } = require("./solution");
 
 const getInputs = async (testString) => {
   const rl = readline.createInterface({
@@ -9,34 +8,22 @@ const getInputs = async (testString) => {
     crlfDelay: Infinity,
   });
 
-  let numbers = [];
+  const lines = [];
   for await (const line of rl) {
-    numbers = line.split(" ").map((x) => x.split("").map((y) => parseInt(y)));
+    lines.push(line);
   }
-  return { numbers };
+  return { lines };
 };
 
 const part1 = async () => {
-  const { numbers } = await getInputs("test2.txt");
-  let copy = numbers;
-  for (let i = 0; i < 25; i++) {
-    copy = blink(copy);
-    // console.log("Copy", copy);
-  }
-  //console.log(copy.map((x) => x.join("")));
-  return copy.length;
+  const { lines } = await getInputs("test.txt");
+  return 0;
 };
 
 const part2 = async () => {
-  const { numbers } = await getInputs("test2.txt");
-  let sum = 0;
-  const max = 75;
-  const calculated = {};
-  for (let i = 0; i < numbers.length; i++) {
-    sum += blinkIntoDepth(0, calculated, max, numbers[i]);
-  }
-  return sum;
-}; //241651071960597
+  const { lines } = await getInputs("test2.txt");
+  return 0;
+};
 
 const main = async () => {
   console.time("Time 1");
