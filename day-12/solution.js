@@ -44,12 +44,8 @@ const recursion = (arr = [["O", "Y"]], startColor = "O", current = new Point(0, 
   return info;
 };
 
-const findNextPermutation = (permutation = [0, 1], shifted = 1) => {
-  const permutationFound = crossPermutaions[(crossPermutaions.findIndex((x) => x[0] === permutation[0] && x[1] === permutation[1]) + shifted) % 8];
-  return new Point(permutationFound[0], permutationFound[1]);
-};
-const findPrevPermutation = (permutation = [0, 1], shifted = 1) => {
-  const permutationFound = crossPermutaions[(crossPermutaions.findIndex((x) => x[0] === permutation[0] && x[1] === permutation[1]) - shifted + 8) % 8];
+const findPermutation = (permutation = [0, 1], shifted = 1) => {
+  const permutationFound = crossPermutaions[(crossPermutaions.findIndex((x) => x[0] === permutation[0] && x[1] === permutation[1]) + shifted + 8) % 8];
   return new Point(permutationFound[0], permutationFound[1]);
 };
 
@@ -64,11 +60,9 @@ const findAngles = (arr = [["O"]], color = "O", direction = [0, 1]) => {
       const curr = new Point(i, j);
       if (arr[i][j] === `filled_${color}`) {
         const next = curr.add(new Point(direction[0], direction[1]));
-        const left = curr.add(findPrevPermutation(direction, 2));
-        const right = curr.add(findNextPermutation(direction, 2));
-        const leftTop = curr.add(findPrevPermutation(direction));
-        const rightTop = curr.add(findNextPermutation(direction));
-        //   console.log(left, leftTop, next, rightTop, right);
+        const left = curr.add(findPermutation(direction, -2));
+        const right = curr.add(findPermutation(direction, 2));
+        const rightTop = curr.add(findPermutation(direction, 1));
         if (isBoundry(arr, left, color) && isBoundry(arr, next, color)) {
           angles++;
         }
@@ -95,7 +89,6 @@ module.exports = {
   recursion,
   permutations,
   findAngles,
-  findNextPermutation,
-  findPrevPermutation,
+  findPermutation,
   fillArrayWithDone,
 };

@@ -1,14 +1,5 @@
-const { readdirSync } = require("fs");
 const { Point } = require("../helpers/points");
-const {
-  recursion,
-  recursionFillWithSides,
-  recursionCalculateNotPrev,
-  findNextPermutation,
-  findPrevPermutation,
-  findAngles,
-  permutations,
-} = require("./solution");
+const { recursion, findPermutation, findAngles, permutations } = require("./solution");
 
 const unitTemplate = ({ functionToCheck, params, name, check }) => {
   const funResult = functionToCheck(...params);
@@ -79,17 +70,17 @@ const generateUnits = () => [
     }),
   () =>
     unitTemplate({
-      functionToCheck: findNextPermutation,
-      params: [[0, -1]],
+      functionToCheck: findPermutation,
+      params: [[0, -1], 1],
       name: "Find next permutation",
-      check: (result) => result.x === 1 && result.y === 0,
+      check: (result) => result.x === 1 && result.y === -1,
     }),
   () =>
     unitTemplate({
-      functionToCheck: findPrevPermutation,
-      params: [[1, 0]],
+      functionToCheck: findPermutation,
+      params: [[1, 0], -1],
       name: "Find prev permutation",
-      check: (result) => result.x === 0 && result.y === -1,
+      check: (result) => result.x === 1 && result.y === -1,
     }),
   () => {
     const arr = [
@@ -150,7 +141,6 @@ const generateUnits = () => [
     for (let i = 0; i < 4; i++) {
       sum += findAngles(arr, "A", permutations[i]);
     }
-    //   console.log(sum);
     return {
       name: "Find angles",
       result: sum === 8,
@@ -167,7 +157,6 @@ const generateUnits = () => [
     for (let i = 0; i < 4; i++) {
       sum += findAngles(arr, "B", permutations[i]);
     }
-    //  console.log(sum);
     return {
       name: "Find angles",
       result: sum === 4,
@@ -186,7 +175,6 @@ const generateUnits = () => [
     for (let i = 0; i < 4; i++) {
       sum += findAngles(arr, "A", permutations[i]);
     }
-    //console.log(sum);
     return {
       name: "Find angles",
       result: sum === 12,
