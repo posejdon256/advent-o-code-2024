@@ -7,6 +7,17 @@ const permutations = [
   [0, -1],
 ];
 
+const crossPermutaions = [
+  [1, 0],
+  [1, 1],
+  [0, 1],
+  [-1, 1],
+  [-1, 0],
+  [-1, -1],
+  [0, -1],
+  [1, -1],
+];
+
 const recursion = (arr = [["O", "Y"]], startColor = "O", current = new Point(0, 1), prev = new Point(1, 0)) => {
   const info = { filled: 0, wall: 0 };
   if (current.isOutsideOfBoundry(arr.length - 1, arr[0].length - 1)) {
@@ -33,93 +44,58 @@ const recursion = (arr = [["O", "Y"]], startColor = "O", current = new Point(0, 
   return info;
 };
 
-const recursionFillWithSides = (arr = [["O", "Y"]], startColor = "O", current = new Point(0, 1), prev = new Point(1, 0)) => {
-  const info = { L: false, T: false, R: false, B: false };
-  if (current.isOutsideOfBoundry(arr.length - 1, arr[0].length - 1)) {
-    return "wall";
-  }
-  if (arr[current.x][current.y] !== startColor) {
-    if (typeof arr[current.x][current.y] === "object") {
-      return "was_here";
-    }
-    return "wall";
-  }
-  arr[current.x][current.y] = info;
-  for (let i = 0; i < permutations.length; i++) {
-    const newPoint = new Point(current.x + permutations[i][0], current.y + permutations[i][1]);
-    if (!newPoint.isEqual(prev)) {
-      const infoFromRecursion = recursionFillWithSides(arr, startColor, newPoint, current);
-      if (infoFromRecursion === "wall") {
-        if (permutations[i][0] === 1) {
-          info.B = true;
-        } else if (permutations[i][0] === -1) {
-          info.T = true;
-        } else if (permutations[i][1] === 1) {
-          info.R = true;
-        } else {
-          info.L = true;
+const findNextPermutation = (permutation = [0, 1], shifted = 1) => {
+  const permutationFound = crossPermutaions[(crossPermutaions.findIndex((x) => x[0] === permutation[0] && x[1] === permutation[1]) + shifted) % 8];
+  return new Point(permutationFound[0], permutationFound[1]);
+};
+const findPrevPermutation = (permutation = [0, 1], shifted = 1) => {
+  const permutationFound = crossPermutaions[(crossPermutaions.findIndex((x) => x[0] === permutation[0] && x[1] === permutation[1]) - shifted + 8) % 8];
+  return new Point(permutationFound[0], permutationFound[1]);
+};
+
+const isBoundry = (arr = [["O"]], point = new Point(0, 0), color) => {
+  return point.isOutsideOfBoundry(arr.length - 1, arr[0].length - 1) || arr[point.x][point.y] !== `filled_${color}`;
+};
+
+const findAngles = (arr = [["O"]], color = "O", direction = [0, 1]) => {
+  let angles = 0;
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = 0; j < arr.length; j++) {
+      const curr = new Point(i, j);
+      if (arr[i][j] === `filled_${color}`) {
+        const next = curr.add(new Point(direction[0], direction[1]));
+        const left = curr.add(findPrevPermutation(direction, 2));
+        const right = curr.add(findNextPermutation(direction, 2));
+        const leftTop = curr.add(findPrevPermutation(direction));
+        const rightTop = curr.add(findNextPermutation(direction));
+        //   console.log(left, leftTop, next, rightTop, right);
+        if (isBoundry(arr, left, color) && isBoundry(arr, next, color)) {
+          angles++;
+        }
+        if (isBoundry(arr, right, color) && !isBoundry(arr, next, color) && !isBoundry(arr, rightTop, color)) {
+          angles++;
         }
       }
     }
   }
-  arr[current.x][current.y] = info;
-  return arr;
+  return angles;
 };
 
-const recursionCalculateNotPrev = (
-  arr = [["O", "Y"]],
-  current = new Point(0, 1),
-  prev = new Point(1, 0),
-  sum = { L: 0, T: 0, R: 0, B: 0 },
-  startPoint = { x: 0, y: 0 }
-) => {
-  // console.log("Start", current, sum);
-  if (current.isOutsideOfBoundry(arr.length - 1, arr[0].length - 1)) {
-    return;
-  }
-  if (typeof arr[current.x][current.y] !== "object") {
-    return;
-  }
-  if (arr[current.x][current.y].visited && !current.isEqual(startPoint)) {
-    if (arr[current.x][current.y].L && arr[prev.x][prev.y].L) {
-      sum.L--;
-    }
-    if (arr[current.x][current.y].R && arr[prev.x][prev.y].R) {
-      sum.R--;
-    }
-    if (arr[current.x][current.y].T && arr[prev.x][prev.y].T) {
-      sum.T--;
-    }
-    if (arr[current.x][current.y].B && arr[prev.x][prev.y].B) {
-      sum.B--;
-    }
-    return;
-  }
-  if (arr[current.x][current.y].L && !arr[prev.x][prev.y].L) {
-    sum.L++;
-  }
-  if (arr[current.x][current.y].R && !arr[prev.x][prev.y].R) {
-    sum.R++;
-  }
-  if (arr[current.x][current.y].T && !arr[prev.x][prev.y].T) {
-    sum.T++;
-  }
-  if (arr[current.x][current.y].B && !arr[prev.x][prev.y].B) {
-    sum.B++;
-  }
-  arr[current.x][current.y].visited = true;
-  for (let i = 0; i < permutations.length; i++) {
-    const newPoint = new Point(current.x + permutations[i][0], current.y + permutations[i][1]);
-    if (!newPoint.isEqual(prev)) {
-      console.log(newPoint, current);
-      recursionCalculateNotPrev(arr, newPoint, current, sum);
+const fillArrayWithDone = (arr = [["O"]]) => {
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = 0; j < arr[0].length; j++) {
+      if (arr[i][j].includes("filled")) {
+        arr[i][j] = "done";
+      }
     }
   }
-  return sum;
 };
 
 module.exports = {
   recursion,
-  recursionFillWithSides,
-  recursionCalculateNotPrev,
+  permutations,
+  findAngles,
+  findNextPermutation,
+  findPrevPermutation,
+  fillArrayWithDone,
 };

@@ -1,6 +1,14 @@
 const { readdirSync } = require("fs");
 const { Point } = require("../helpers/points");
-const { recursion, recursionFillWithSides, recursionCalculateNotPrev } = require("./solution");
+const {
+  recursion,
+  recursionFillWithSides,
+  recursionCalculateNotPrev,
+  findNextPermutation,
+  findPrevPermutation,
+  findAngles,
+  permutations,
+} = require("./solution");
 
 const unitTemplate = ({ functionToCheck, params, name, check }) => {
   const funResult = functionToCheck(...params);
@@ -71,78 +79,119 @@ const generateUnits = () => [
     }),
   () =>
     unitTemplate({
-      functionToCheck: recursionFillWithSides,
-      params: [
-        [
-          ["A", "A", "A", "A"],
-          ["B", "B", "C", "D"],
-          ["B", "B", "C", "C"],
-          ["E", "E", "E", "C"],
-        ],
-        "C",
-        new Point(1, 2),
-        new Point(1, 2),
-      ],
-
-      name: "Unit 4",
-      check: (result) => result,
+      functionToCheck: findNextPermutation,
+      params: [[0, -1]],
+      name: "Find next permutation",
+      check: (result) => result.x === 1 && result.y === 0,
     }),
   () =>
     unitTemplate({
-      functionToCheck: recursionCalculateNotPrev,
-      params: [
-        [
-          ["A", "A", "A", "A"],
-          ["B", "B", { L: true, T: true, R: true, B: false }, "D"],
-          ["B", "B", { L: true, T: false, R: false, B: true }, { L: false, T: true, R: true, B: false }],
-          ["E", "E", "E", { L: true, T: false, R: true, B: true }],
-        ],
-        new Point(1, 2),
-        new Point(1, 2),
-        { L: 1, R: 1, T: 1, B: 0 },
-        new Point(0, 0),
-      ],
-
-      name: "Unit 5",
-      check: (result) => result,
+      functionToCheck: findPrevPermutation,
+      params: [[1, 0]],
+      name: "Find prev permutation",
+      check: (result) => result.x === 0 && result.y === -1,
     }),
-  () =>
-    unitTemplate({
-      functionToCheck: recursionFillWithSides,
-      params: [
-        [
-          ["A", "A", "A", "A"],
-          ["B", "B", "C", "D"],
-          ["B", "B", "C", "C"],
-          ["E", "E", "E", "C"],
-        ],
-        "B",
-        new Point(1, 0),
-        new Point(1, 0),
-      ],
-
-      name: "Unit 6",
-      check: (result) => result,
-    }),
-  () =>
-    unitTemplate({
-      functionToCheck: recursionCalculateNotPrev,
-      params: [
-        [
-          ["A", "A", "A", "A"],
-          [{ L: true, T: true, R: false, B: false }, { L: false, T: true, R: true, B: false }, "C", "D"],
-          [{ L: true, T: false, R: false, B: true }, { L: false, T: false, R: true, B: true }, "C", "C"],
-          ["E", "E", "E", "C"],
-        ],
-        new Point(1, 0),
-        new Point(1, 0),
-        { L: 1, R: 0, T: 1, B: 0 },
-        new Point(1, 0),
-      ],
-
-      name: "Unit 7",
-      check: (result) => result,
-    }),
+  () => {
+    const arr = [
+      ["A", "A", "A", "A"],
+      ["filled_B", "filled_B", "C", "D"],
+      ["filled_B", "filled_B", "C", "C"],
+      ["E", "E", "E", "C"],
+    ];
+    let sum = 0;
+    for (let i = 0; i < 4; i++) {
+      sum += findAngles(arr, "B", permutations[i]);
+    }
+    return {
+      name: "Find angles",
+      result: sum === 4,
+    };
+  },
+  () => {
+    const arr = [
+      ["A", "A", "A", "A"],
+      ["B", "B", "filled_C", "D"],
+      ["B", "B", "filled_C", "filled_C"],
+      ["E", "E", "E", "filled_C"],
+    ];
+    let sum = 0;
+    for (let i = 0; i < 4; i++) {
+      sum += findAngles(arr, "C", permutations[i]);
+    }
+    return {
+      name: "Find angles",
+      result: sum === 8,
+    };
+  },
+  () => {
+    const arr = [
+      ["filled_A", "filled_A", "filled_A", "filled_A"],
+      ["B", "B", "C", "D"],
+      ["B", "B", "C", "C"],
+      ["E", "E", "E", "C"],
+    ];
+    let sum = 0;
+    for (let i = 0; i < 4; i++) {
+      sum += findAngles(arr, "A", permutations[i]);
+    }
+    return {
+      name: "Find angles",
+      result: sum === 4,
+    };
+  },
+  () => {
+    const arr = [
+      ["filled_A", "filled_A", "filled_A", "filled_A"],
+      ["filled_A", "B", "B", "filled_A"],
+      ["filled_A", "B", "B", "filled_A"],
+      ["filled_A", "filled_A", "filled_A", "filled_A"],
+    ];
+    let sum = 0;
+    for (let i = 0; i < 4; i++) {
+      sum += findAngles(arr, "A", permutations[i]);
+    }
+    //   console.log(sum);
+    return {
+      name: "Find angles",
+      result: sum === 8,
+    };
+  },
+  () => {
+    const arr = [
+      ["A", "A", "A", "A"],
+      ["A", "filled_B", "filled_B", "A"],
+      ["A", "filled_B", "filled_B", "A"],
+      ["A", "A", "A", "A"],
+    ];
+    let sum = 0;
+    for (let i = 0; i < 4; i++) {
+      sum += findAngles(arr, "B", permutations[i]);
+    }
+    //  console.log(sum);
+    return {
+      name: "Find angles",
+      result: sum === 4,
+    };
+  },
+  () => {
+    const arr = [
+      ["A", "A", "A", "A", "A", "A"],
+      ["A", "A", "A", "B", "B", "A"],
+      ["A", "A", "A", "B", "B", "A"],
+      ["A", "B", "B", "A", "A", "A"],
+      ["A", "B", "B", "A", "A", "A"],
+      ["A", "A", "A", "A", "A", "A"],
+    ].map((x) => x.map((y) => (y === "A" ? "filled_A" : "B")));
+    let sum = 0;
+    for (let i = 0; i < 4; i++) {
+      sum += findAngles(arr, "A", permutations[i]);
+    }
+    //console.log(sum);
+    return {
+      name: "Find angles",
+      result: sum === 12,
+    };
+  },
 ];
 
 const checkUnits = () => {
