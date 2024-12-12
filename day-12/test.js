@@ -1,6 +1,9 @@
 const readline = require("readline");
 const fs = require("fs");
 const { checkUnits } = require("./unit-tests");
+const { recursion, recursionFillWithSides, recursionCalculateNotPrev } = require("./solution");
+const { Point } = require("../helpers/points");
+const { cloneArray } = require("../helpers/array");
 
 const getInputs = async (testString) => {
   const rl = readline.createInterface({
@@ -8,21 +11,48 @@ const getInputs = async (testString) => {
     crlfDelay: Infinity,
   });
 
-  const lines = [];
+  const arr = [];
   for await (const line of rl) {
-    lines.push(line);
+    arr.push(line.split(""));
   }
-  return { lines };
+  return { arr };
 };
 
 const part1 = async () => {
-  const { lines } = await getInputs("test.txt");
-  return 0;
+  const results = [];
+  const { arr } = await getInputs("test2.txt");
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = 0; j < arr[i].length; j++) {
+      if (!arr[i][j].includes("filled")) {
+        results.push(recursion(arr, arr[i][j], new Point(i, j), new Point(i, j)));
+      }
+    }
+  }
+  let sum = 0;
+  results.forEach(({ filled, wall }) => {
+    sum += filled * wall;
+  });
+  return sum;
 };
 
 const part2 = async () => {
-  const { lines } = await getInputs("test2.txt");
-  return 0;
+  let result = 0;
+  const { arr } = await getInputs("test.txt");
+  const copy = cloneArray(arr);
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = 0; j < arr[i].length; j++) {
+      if (!copy[i][j].includes("filled")) {
+        const newPoint = new Point(i, j);
+        const { filled } = recursion(copy, copy[i][j], newPoint, newPoint);
+        const copyWithObjects = cloneArray(arr);
+        recursionFillWithSides(copyWithObjects, copyWithObjects[i][j], newPoint, newPoint);
+        const sums = { L: copyWithObjects[i][j].L, R: copyWithObjects[i][j].R, T: copyWithObjects[i][j].T, B: copyWithObjects[i][j].B };
+        recursionCalculateNotPrev(copyWithObjects, newPoint, newPoint, sums);
+        result += filled * (sums.L + sums.R + sums.B + sums.T);
+      }
+    }
+  }
+  return result;
 };
 
 const main = async () => {
