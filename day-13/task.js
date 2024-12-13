@@ -2,7 +2,7 @@ const readline = require("readline");
 const fs = require("fs");
 const { checkUnits } = require("./unit-tests");
 const { Point } = require("../helpers/points");
-const { getAAndB, calcAandB } = require("./helpers");
+const { calcAandB } = require("./helpers");
 
 const getInputs = async (testString) => {
   const rl = readline.createInterface({
@@ -47,8 +47,7 @@ const part1 = async () => {
   const { tasks } = await getInputs("test.txt");
   let sum = 0;
   for (let i = 0; i < tasks.length; i++) {
-    const { A, B } = getAAndB(tasks[i].A, tasks[i].B, tasks[i].Prize);
-    console.log(A, B);
+    const { A, B } = calcAandB(tasks[i].A, tasks[i].B, tasks[i].Prize);
     if (A !== -1) {
       sum += B + A * 3;
     }
@@ -63,7 +62,6 @@ const part2 = async () => {
   for (let i = 0; i < tasks.length; i++) {
     const big = tasks[i].Prize.add(shift);
     const { A, B } = calcAandB(tasks[i].A, tasks[i].B, big);
-    console.log(A, B);
     if (A > 0 - 1 && B > 0) {
       sum += B + A * 3;
     }

@@ -1,5 +1,5 @@
 const { Point } = require("../helpers/points");
-const { getAAndB, calcAandB } = require("./helpers");
+const { calcAandB } = require("./helpers");
 
 const unitTemplate = ({ functionToCheck, params, name, check }) => {
   const funResult = functionToCheck(...params);
@@ -14,20 +14,6 @@ const unitTemplate = ({ functionToCheck, params, name, check }) => {
 };
 
 const generateUnits = () => [
-  () =>
-    unitTemplate({
-      functionToCheck: getAAndB,
-      params: [new Point(0, 1), new Point(0, 0), new Point(0, 10)],
-      name: "Get A and B",
-      check: (result) => result,
-    }),
-  () =>
-    unitTemplate({
-      functionToCheck: getAAndB,
-      params: [new Point(0, 2), new Point(0, 1), new Point(0, 15)],
-      name: "Get A and B 2",
-      check: (result) => result,
-    }),
   () =>
     unitTemplate({
       functionToCheck: calcAandB,
