@@ -62,7 +62,7 @@ const part2 = async () => {
   for (let i = 0; i < tasks.length; i++) {
     const big = tasks[i].Prize.add(shift);
     const { A, B } = calcAandB(tasks[i].A, tasks[i].B, big);
-    if (A > 0 - 1 && B > 0) {
+    if (A > 0 && B > 0) {
       sum += B + A * 3;
     }
   }

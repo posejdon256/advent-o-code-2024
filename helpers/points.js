@@ -1,9 +1,14 @@
+let id = 0;
+
 class Point {
   x;
   y;
+  id;
   constructor(_x, _y) {
     this.x = _x;
     this.y = _y;
+    this.id = id;
+    id++;
   }
   add(b) {
     return new Point(this.x + b.x, this.y + b.y);
@@ -16,6 +21,9 @@ class Point {
   }
   divide(b) {
     return new Point(this.x / b, this.y / b);
+  }
+  modulo(b = new Point(0, 0)) {
+    return new Point(this.x % b.x, this.y % b.y);
   }
   divideVector(b) {
     if (b.x === 0) {
