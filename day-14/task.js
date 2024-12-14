@@ -48,20 +48,10 @@ const part2 = async () => {
   const mapSize = new Point(101, 103);
   let sec = 1;
   while (true) {
-    const results = {};
     const newPositions = [];
     for (let i = 0; i < robots.length; i++) {
       const newPosition = calculateNewPosition(robots[i], mapSize, sec);
       newPositions.push(newPosition);
-      const quadranat = getQuadrant(newPosition, mapSize);
-      if (quadranat === -1) {
-        continue;
-      }
-      if (!results[quadranat]) {
-        results[quadranat] = 1;
-      } else {
-        results[quadranat]++;
-      }
     }
     if (newPositions.every((x) => newPositions.every((y) => !x.isEqual(y) || x.id === y.id))) {
       return sec;
