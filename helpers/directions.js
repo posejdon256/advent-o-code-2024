@@ -27,17 +27,30 @@ class Direction {
         this.coordinates = new Point(0, 1);
     }
   }
-  geDirection(sign = "^") {
-    switch (sign) {
-      case "^":
+  getRotationRotatedBy90() {
+    switch (this.name) {
+      case DirectionsEnum.LEFT:
         return new Direction(DirectionsEnum.TOP);
-      case "<":
-        return new Direction(DirectionsEnum.LEFT);
-      case ">":
-        return new Direction(DirectionsEnum.RIGHT);
-      case "v":
-      default:
+      case DirectionsEnum.RIGHT:
         return new Direction(DirectionsEnum.BOTTOM);
+      case DirectionsEnum.TOP:
+        return new Direction(DirectionsEnum.LEFT);
+      case DirectionsEnum.BOTTOM:
+      default:
+        return new Direction(DirectionsEnum.RIGHT);
+    }
+  }
+  getRotationRotatedBy270() {
+    switch (this.name) {
+      case DirectionsEnum.LEFT:
+        return new Direction(DirectionsEnum.BOTTOM);
+      case DirectionsEnum.RIGHT:
+        return new Direction(DirectionsEnum.TOP);
+      case DirectionsEnum.TOP:
+        return new Direction(DirectionsEnum.RIGHT);
+      case DirectionsEnum.BOTTOM:
+      default:
+        return new Direction(DirectionsEnum.LEFT);
     }
   }
 }
