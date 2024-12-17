@@ -1,34 +1,42 @@
 class Operations {
   #adv = (operand = 2) => {
+    //0
     this.REGISTERS.A = Math.floor(this.REGISTERS.A / Math.pow(2, this.getOperandValue(operand)));
     return { output: "" };
   };
   #bxl = (operand = 2) => {
+    //1
     this.REGISTERS.B = operand ^ this.REGISTERS.B;
     return { output: "" };
   };
   #bst = (operand = 2) => {
+    //2
     this.REGISTERS.B = this.getOperandValue(operand) % 8;
     return { output: "" };
   };
   #jnz = (operand = 2) => {
+    //3
     if (this.REGISTERS.A === 0) {
       return { output: "" };
     }
     return { output: "", stepper: operand };
   };
   #bxc = (operand = 2) => {
+    //4
     this.REGISTERS.B = this.REGISTERS.B ^ this.REGISTERS.C;
     return { output: "" };
   };
   #out = (operand = 2) => {
+    //5
     return { output: this.getOperandValue(operand) % 8 };
   };
   #bdv = (operand = 2) => {
+    //6
     this.REGISTERS.B = Math.floor(this.REGISTERS.A / Math.pow(2, this.getOperandValue(operand)));
     return { output: "" };
   };
   #cdv = (operand = 2) => {
+    //7
     this.REGISTERS.C = Math.floor(this.REGISTERS.A / Math.pow(2, this.getOperandValue(operand)));
     return { output: "" };
   };
