@@ -27,6 +27,19 @@ class Direction {
         this.coordinates = new Point(0, 1);
     }
   }
+  getSign() {
+    switch (this.name) {
+      case DirectionsEnum.LEFT:
+        return "<";
+      case DirectionsEnum.RIGHT:
+        return ">";
+      case DirectionsEnum.TOP:
+        return "^";
+      case DirectionsEnum.BOTTOM:
+      default:
+        return "v";
+    }
+  }
   getRotationRotatedBy90() {
     switch (this.name) {
       case DirectionsEnum.LEFT:
@@ -54,7 +67,21 @@ class Direction {
     }
   }
 }
+const getDirection = (sign = "^") => {
+  switch (sign) {
+    case "^":
+      return new Direction(DirectionsEnum.TOP);
+    case "<":
+      return new Direction(DirectionsEnum.LEFT);
+    case ">":
+      return new Direction(DirectionsEnum.RIGHT);
+    case "v":
+    default:
+      return new Direction(DirectionsEnum.BOTTOM);
+  }
+};
 module.exports = {
   Direction,
   DirectionsEnum,
+  getDirection,
 };

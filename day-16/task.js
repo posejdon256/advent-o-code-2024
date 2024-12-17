@@ -31,29 +31,17 @@ const getInputs = async (testString) => {
   return { arr, start, end };
 };
 
-const part1 = async () => {
-  const { arr, start, end } = await getInputs("test3.txt");
-  const cost = findE(arr, start);
-  // console.log(arr.length * arr[0].length * 4);
-  // console.log(cost.map((x) => x.map((y) => Math.min(y.left, y.top, y.bottom, y.right)))[end.y][end.x]);
-  return cost;
-};
-
-const part2 = async () => {
-  const { lines } = await getInputs("test2.txt");
-  return 0;
+const part1And2 = async () => {
+  const { arr, start, end } = await getInputs("test2.txt");
+  const { smallestFound, sum } = findE(arr, start);
+  return `Sum ${sum} ${smallestFound}`;
 };
 
 const main = async () => {
-  console.time("Time 1");
-  const part1Val = await part1();
-  console.timeEnd("Time 1");
-  console.log("Part 1", part1Val);
-
-  console.time("Time 2");
-  const part2Val = await part2();
-  console.timeEnd("Time 2");
-  console.log("Part 2", part2Val);
+  console.time("Time 1 and 2");
+  const part1Val = await part1And2();
+  console.timeEnd("Time 1 and 2");
+  console.log("Part 1 and 2", part1Val);
 
   checkUnits();
 };

@@ -1,36 +1,30 @@
 const { cloneArray } = require("../helpers/array");
-const { Direction, DirectionsEnum } = require("../helpers/directions");
+const { Direction, DirectionsEnum, getDirection } = require("../helpers/directions");
 const { Point } = require("../helpers/points");
 
 const INT_MAX = 100000000;
 
-// const findS = (
-//   arr = [["O"]],
-//   current = new Point(0, 0),
-//   prev = new Point(0, 0),
-//   direction = new Direction(DirectionsEnum.RIGHT),
-//   costAngleAndMove = 1,
-//   visited = []
-// ) => {
-//   if (visited[current.y * arr[0].length + current.x]) {
-//     return;
-//   }
-//   if (arr[current.y][current.x] >= INT_MAX || arr[current.y][current.x] === "#") {
-//     return;
-//   }
-//   if (arr[current.y][current.x] === "E") {
-//     arr[current.y][current.x] = arr[prev.y][prev.x] + costAngleAndMove;
-//     return;
-//   }
-//   const leftDir = direction.getRotationRotatedBy270();
-//   const rightDir = direction.getRotationRotatedBy90();
-//   const _visited = [...visited];
-//   _visited[arr[0].length * current.y + current.x] = true;
-//   arr[current.y][current.x] = Math.min(arr[prev.y][prev.x] + costAngleAndMove, getNumberOrMaxNumber(arr[current.y][current.x]));
-//   findS(arr, current.add(direction.coordinates), current, direction, 1, _visited);
-//   findS(arr, current.add(leftDir.coordinates), current, leftDir, 1001, _visited);
-//   findS(arr, current.add(rightDir.coordinates), current, rightDir, 1001, _visited);
-// };
+const drawO = (start = new Point(), path, visited) => {
+  let current = start;
+  const directions = path.split("").map((x) => getDirection(x));
+  visited[current.y][current.x].isGood = "O";
+  for (let i = 0; i < directions.length; i++) {
+    current = current.add(directions[i].coordinates);
+    visited[current.y][current.x].isGood = "O";
+  }
+};
+
+const sumTiles = (visited) => {
+  let sum = 0;
+  for (let i = 0; i < visited.length; i++) {
+    for (let j = 0; j < visited[0].length; j++) {
+      if (visited[i][j].isGood === "O") {
+        sum++;
+      }
+    }
+  }
+  return sum;
+};
 
 const findE = (arr = [["O"]], start = new Point(0, 0)) => {
   const stack = [];
@@ -42,54 +36,63 @@ const findE = (arr = [["O"]], start = new Point(0, 0)) => {
         right: INT_MAX,
         bottom: INT_MAX,
         top: INT_MAX,
+        isGood: "-",
       };
     }
   }
-  stack.push({ current: start, direction: new Direction(DirectionsEnum.RIGHT), cost: 0 });
-  let counter = 0;
+  let smallestFound = INT_MAX;
+  stack.push({ current: start, direction: new Direction(DirectionsEnum.RIGHT), cost: 0, path: "" });
   while (stack.length > 0) {
     stack.sort((a, b) => b.cost - a.cost);
-    //console.log(stack);
-    const { current, direction, cost } = stack.pop();
+    const { current, direction, path, cost } = stack.pop();
+    if (arr[current.y][current.x] === "#") {
+      continue;
+    }
+    const shift = 1001;
+    const leftDir = direction.getRotationRotatedBy270();
+    const rightDir = direction.getRotationRotatedBy90();
+    const backDir = rightDir.getRotationRotatedBy90();
     if (arr[current.y][current.x] === "E") {
-      return cost;
+      //  console.log("E", cost);
+      if (
+        Math.min(
+          visited[current.y][current.x].left,
+          visited[current.y][current.x].right,
+          visited[current.y][current.x].top,
+          visited[current.y][current.x].bottom
+        ) >= cost
+      ) {
+        smallestFound = cost;
+        drawO(start, path, visited);
+        visited[current.y][current.x][direction.name] = cost;
+      }
+      continue;
+    }
+    if (
+      visited[current.y][current.x][leftDir.name] + shift <= cost ||
+      visited[current.y][current.x][rightDir.name] + shift <= cost ||
+      visited[current.y][current.x][backDir.name] + shift <= cost ||
+      visited[current.y][current.x][direction.name] + shift <= cost
+    ) {
+      continue;
     }
     if (visited[current.y][current.x][direction.name] < cost) {
       continue;
     }
-    // console.log(current.x, current.y, arr[current.y][current.x], direction.name, cost);
-    const leftDir = direction.getRotationRotatedBy270();
-    const rightDir = direction.getRotationRotatedBy90();
+
     const forward = current.add(direction.coordinates);
-    counter++;
+    const left = current.add(leftDir.coordinates);
+    const right = current.add(rightDir.coordinates);
+    const back = current.add(rightDir.getRotationRotatedBy90().coordinates);
     visited[current.y][current.x][direction.name] = cost;
-    if (arr[forward.y][forward.x] !== "#") {
-      stack.push({ current: current.add(direction.coordinates), direction, cost: cost + 1 });
-    }
-    stack.push({ current, direction: leftDir, cost: cost + 1000 });
-    stack.push({ current, direction: rightDir, cost: cost + 1000 });
-  }
-  return visited;
-};
 
-const getNumberOrMaxNumber = (num) => {
-  if (isNaN(num)) {
-    return INT_MAX;
+    stack.push({ current: forward, direction, cost: cost + 1, path: path + direction.getSign() });
+    stack.push({ current: left, direction: leftDir, cost: cost + 1001, path: path + direction.getSign() });
+    stack.push({ current: right, direction: rightDir, cost: cost + 1001, path: path + direction.getSign() });
+    stack.push({ current: back, direction: rightDir.getRotationRotatedBy90(), cost: cost + 2001, path: path + rightDir.getRotationRotatedBy90().getSign() });
   }
-  return num;
+  return { sum: sumTiles(visited), smallestFound };
 };
-
-// const startFindS = (arr = [["O"]], current) => {
-//   const visited = new Array(arr.length * arr[0].length).fill(false);
-//   visited[arr[0].length * current.y + current.x] = true;
-//   const direction = new Direction(DirectionsEnum.RIGHT);
-//   const leftDir = direction.getRotationRotatedBy270();
-//   const rightDir = direction.getRotationRotatedBy90();
-//   arr[current.y][current.x] = 0;
-//   findS(arr, current.add(direction.coordinates), current, direction, 1, visited);
-//   findS(arr, current.add(leftDir.coordinates), current, leftDir, 1001, visited);
-//   findS(arr, current.add(rightDir.coordinates), current, rightDir, 1001, visited);
-// };
 
 module.exports = {
   findE,

@@ -24,7 +24,7 @@ const generateUnits = () => [
       ["#", "#", "#", "#"],
     ];
     const cost = findE(arr, new Point(2, 1));
-    console.log(cost);
+    // console.log(cost);
     return {
       result: cost === 2002,
       name: "Find S",
@@ -39,7 +39,7 @@ const generateUnits = () => [
     ];
     const cost = findE(arr, new Point(2, 1));
     // console.log(cost[1][2]);
-    console.log(cost);
+    //  console.log(cost);
     return {
       result: cost === 2002,
       name: "Find S 2",
