@@ -93,6 +93,37 @@ class Operations {
   }
 }
 
+const xor = (v1, v2) => {
+  var hi = 0x80000000;
+  var low = 0x7fffffff;
+  var hi1 = ~~(v1 / hi);
+  var hi2 = ~~(v2 / hi);
+  var low1 = v1 & low;
+  var low2 = v2 & low;
+  var h = hi1 ^ hi2;
+  var l = low1 ^ low2;
+  return h * hi + l;
+};
+
+const getA = (output = [1, 2], Aprev = 12, i = 1) => {
+  const results = [];
+  for (let j = 0; j < 8; j++) {
+    const A = Aprev * 8 + j;
+    const value = xor(xor(A % 8, 6), Math.floor(A / Math.pow(2, A % 8 ^ 3))) % 8;
+    if (value === output[i]) {
+      if (i === output.length - 1) {
+        return A;
+      }
+      results.push(getA(output, A, i + 1));
+    }
+  }
+  if (results.length === 0) {
+    return -1;
+  }
+  return results.filter((x) => x !== -1)?.sort((a, b) => a - b)[0] || -1;
+};
+
 module.exports = {
   Operations,
+  getA,
 };
