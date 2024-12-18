@@ -53,7 +53,6 @@ const findE = (arr = [["O"]], start = new Point(0, 0)) => {
     const rightDir = direction.getRotationRotatedBy90();
     const backDir = rightDir.getRotationRotatedBy90();
     if (arr[current.y][current.x] === "E") {
-      //  console.log("E", cost);
       if (
         Math.min(
           visited[current.y][current.x].left,
