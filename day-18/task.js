@@ -26,14 +26,19 @@ const part1 = async () => {
 
 const part2 = async () => {
   const { points } = await getInputs("test2.txt");
-  for (let j = 1025; j < points.length; j++) {
-    const arr = createArray(points.slice(0, j), 71);
+  let left = 1025;
+  let right = points.length;
+  while (left + 1 !== right) {
+    const center = Math.round((left + right) / 2);
+    const arr = createArray(points.slice(0, center), 71);
     const result = dijikstra(arr);
     if (result === -1) {
-      return points[j - 1];
+      right = center;
+    } else {
+      left = center;
     }
   }
-  return -1;
+  return points[left];
 };
 
 const main = async () => {
