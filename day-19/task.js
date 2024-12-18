@@ -1,6 +1,6 @@
 const { checkUnits } = require("./unit-tests");
 const { printSolution } = require("../helpers/print");
-const { getInputs } = require("./helpers");
+const { getInputs } = require("./input");
 
 const part1 = async () => {
   const { lines } = await getInputs("test.txt");
