@@ -43,37 +43,68 @@ const canCreateLayout = (word = "adasdasdas", ind = 0, patterns = ["sss"], check
   return false;
 };
 
-const findAllPlacesForPatterns = (patterns = ["asa"], word) => {
-  for (let i = 0; i < patterns.length; i++) {
-    let index = 0;
-    while ((index = word.indexOf(patterns, startIndex)) > -1) {
-      startIndex = index + values[j][k].length;
-      sum++;
+const canCreateLayoutV2 = (word = "adasdasdas", ind = 0, patterns = ["sss"], checked = {}) => {
+  //console.log(word, ind);
+  if (ind === word.length) {
+    return 1;
+  }
+  let sum = 0;
+  const possiblePatterns = patterns.filter((pattern) => pattern.startsWith(word[ind]));
+  for (let i = 0; i < possiblePatterns.length; i++) {
+    if (comparePatternAndWord(possiblePatterns[i], ind, ind + possiblePatterns[i].length, word)) {
+      if (checked[patterns[i] + ind]) {
+        sum += checked[patterns[i] + ind];
+      } else {
+        const value = canCreateLayoutV2(word, ind + possiblePatterns[i].length, patterns, checked);
+        checked[patterns[i] + ind] = value;
+        sum += value;
+      }
     }
   }
+  return sum;
 };
 
-const canCreateLayoutV2 = (word = "adasdasdas", ind = 0, patterns = ["sss"], currentPattern = "adas") => {
-  // console.log(currentPattern);
-  if (ind === word.length) {
-    return [currentPattern + "_"];
-  }
-  const possiblePatterns = patterns.filter((pattern) => pattern.startsWith(word[ind]));
-  let patternsToReurn = [];
-  for (let i = 0; i < possiblePatterns.length; i++) {
-    //  console.log("I", possiblePatterns.length);
-
-    if (comparePatternAndWord(possiblePatterns[i], ind, ind + possiblePatterns[i].length, word)) {
-      patternsToReurn = [
-        ...canCreateLayoutV2(word, ind + possiblePatterns[i].length, patterns, currentPattern + "_" + possiblePatterns[i]),
-        ...patternsToReurn,
-      ];
+const findAllPlacesForPatterns = (patterns = ["asa"], word) => {
+  const places = {};
+  for (let i = 0; i < patterns.length; i++) {
+    let index = 0;
+    let startIndex = 0;
+    places[patterns[i]] = new Array(word.length).fill(0);
+    while ((index = word.indexOf(patterns[i], startIndex)) > -1) {
+      places[patterns[i]][index] = patterns[i].length;
+      startIndex = index + patterns[i].length;
     }
   }
-  return patternsToReurn;
+  // console.log(word, places);
+  return places;
+};
+
+const findAllPaths = (map = { rww: [0, 1] }, ind = 0, size, cache = {}) => {
+  if (ind >= size) {
+    return 1;
+  }
+  let sum = 0;
+  const rec = Object.entries(map)
+    .map(([key, value]) => {
+      return { key, value: value[ind] };
+    })
+    .filter((x) => x.value >= 1);
+  for (let i = 0; i < rec?.length; i++) {
+    const cacheIndex = `${rec[i].key}_${ind + rec[i].value}`;
+    if (cache[cacheIndex]) {
+      sum += cache[cacheIndex];
+    } else {
+      const value = findAllPaths(map, ind + rec[i].value, size, cache);
+      cache[cacheIndex] = value;
+      sum += value;
+    }
+  }
+  return sum;
 };
 module.exports = {
   buildPatternsMap,
   canCreateLayout,
   canCreateLayoutV2,
+  findAllPlacesForPatterns,
+  findAllPaths,
 };
