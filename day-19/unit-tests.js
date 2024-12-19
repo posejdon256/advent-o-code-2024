@@ -1,3 +1,5 @@
+const { getNumberFromChar, getCharFromNumber, convertStringToCode } = require("./helpers");
+
 const unitTemplate = ({ functionToCheck, params, name, check }) => {
   const funResult = functionToCheck(...params);
   const result = check(funResult);
@@ -11,13 +13,13 @@ const unitTemplate = ({ functionToCheck, params, name, check }) => {
 };
 
 const generateUnits = () => [
-  () =>
-    unitTemplate({
-      functionToCheck: () => true,
-      params: [],
-      name: "Unit 1",
-      check: (result) => result,
-    }),
+  // () =>
+  //   unitTemplate({
+  //     functionToCheck: () => getNumberFromChar("a"),
+  //     params: [],
+  //     name: "Get char code",
+  //     check: (result) => result === 0,
+  //   }),
 ];
 
 const checkUnits = () => {

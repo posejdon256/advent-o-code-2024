@@ -7,11 +7,22 @@ const getInputs = async (testString) => {
     crlfDelay: Infinity,
   });
 
-  const lines = [];
+  let i = 0;
+  let patterns = [];
+  let words = [];
+  let maxPatternLength = 0;
   for await (const line of rl) {
-    lines.push(line);
+    if (i === 0) {
+      patterns = line.split(", ");
+      patterns.map((x) => {
+        maxPatternLength = x.length > maxPatternLength ? x.length : maxPatternLength;
+      });
+    } else if (i !== 1) {
+      words.push(line);
+    }
+    i++;
   }
-  return { lines };
+  return { words, patterns, maxPatternLength };
 };
 
 module.exports = {
