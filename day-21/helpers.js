@@ -1,3 +1,4 @@
+const path = require("path");
 const { prepareVisited, bfs } = require("../helpers/bfs");
 const { Point } = require("../helpers/points");
 
@@ -38,11 +39,14 @@ const findMinimumLength = (paths = ["<>"], controller) => {
   //  console.log(paths.length);
   for (let i = 0; i < paths.length; i++) {
     let sum = 0;
+    let index = `A_${paths[i][0]}`;
+    // console.log(index);
+    sum += controllerPaths[index];
     for (let j = 0; j < paths[i].length - 1; j++) {
-      const index = `${paths[i][j]}_${paths[i][j + 1]}`;
+      index = `${paths[i][j]}_${paths[i][j + 1]}`;
       sum += controllerPaths[index];
     }
-    sum += paths[i].length + 1;
+    sum += paths[i].length;
     if (sum < minimum) {
       minimum = sum;
       minWord = paths[i];
@@ -52,22 +56,85 @@ const findMinimumLength = (paths = ["<>"], controller) => {
   return { minimum, minWord };
 };
 
-const findPathForRobot = (ind = 0, map, prevPath = "v>", startPoint = new Point(0, 0), nextPath = "") => {
-  if (ind >= prevPath.length) {
-    return [nextPath];
-  }
-  let start = startPoint;
-  const last = findPointIn2D(map, prevPath[ind]);
+const findPathForRobot = (ind = 0, map, prevPath = "v>", startPoint = new Point(0, 0)) => {
+  const stack = [];
+  const visited = {};
+  stack.push({ ind: ind, start: startPoint, nextPath: "" });
   const retPaths = [];
-  const { path: paths } = bfs(map, start, prepareVisited(map), prevPath[ind], false, true);
-  for (let i = 0; i < paths.length; i++) {
-    retPaths.push(...findPathForRobot(ind + 1, map, prevPath, last, nextPath + paths[i] + "A"));
+  let min = 1000000;
+  while (stack.length > 0) {
+    const { ind, start, nextPath } = stack.pop();
+    if (visited[nextPath]) {
+      continue;
+    }
+    if (ind >= prevPath.length) {
+      if (nextPath.length <= min) {
+        retPaths.push(nextPath);
+        min = nextPath.length;
+      }
+      visited[nextPath] = true;
+      continue;
+    }
+    const last = findPointIn2D(map, prevPath[ind]);
+    let paths = bfs(map, start, prepareVisited(map), prevPath[ind], false, true).path;
+    const localMinimum = Math.min(...paths.map((x) => x.length));
+    for (let i = 0; i < paths.length; i++) {
+      if (paths[i].length > localMinimum) {
+        continue;
+      }
+      stack.push({ ind: ind + 1, start: last, nextPath: nextPath + paths[i] + "A" });
+    }
   }
-  return retPaths;
+  const ret = retPaths.filter((x) => x.length <= min);
+  // console.log(ret[0], ret.length);
+  return ret;
 };
+
+const calculateScore = (paths = ["<>"], controller) => {
+  const best = { score: 100000, paths: [] };
+  const controllerPaths = preparePaths(controller);
+  for (let i = 0; i < paths.length; i++) {
+    let score = controllerPaths[`A_${paths[i][0]}`];
+    for (let j = 1; j < paths[i].length; j++) {
+      score += controllerPaths[`${paths[i][j - 1]}_${paths[i][j]}`];
+      if (paths[i][j] !== paths[i][j - 1]) {
+        score += 2;
+      }
+      if (paths[i][j - 1] === "<" && paths[i][j] === "v") {
+        score++;
+      }
+      if (paths[i][j - 1] === ">" && paths[i][j] === "^") {
+        score++;
+      }
+      if (paths[i][j - 1] === "^" && paths[i][j] === ">") {
+        score++;
+      }
+      if (paths[i][j - 1] === "A" && paths[i][j] === "<") {
+        score--;
+      }
+      if (paths[i][j - 1] === "A" && paths[i][j] === "^") {
+        score++;
+      }
+    }
+    if (score <= best.score) {
+      if (score === best.score) {
+        best.paths.push(paths[i]);
+      } else {
+        best.paths = [paths[i]];
+      }
+      best.score = score;
+    }
+  }
+  console.log(best.score, best.paths);
+  return best.paths;
+  return paths;
+};
+
+// const deepDiveIntoRobots = ()
 
 module.exports = {
   preparePaths,
+  calculateScore,
   findPointIn2D,
   findPathForRobot,
   findMinimumLength,

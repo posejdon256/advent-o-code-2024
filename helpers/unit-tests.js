@@ -1,3 +1,4 @@
+const { bfs, prepareVisited } = require("./bfs");
 const { Line } = require("./lines");
 const { Point } = require("./points");
 
@@ -29,6 +30,15 @@ const testUnitLines = () => {
   console.log(line);
 };
 
+const testBfsPaths = () => {
+  const map = [
+    ["#", "^", "A"],
+    ["<", "v", ">"],
+  ];
+  const { path } = bfs(map, new Point(2, 0), prepareVisited(map), "<", false, true);
+  console.log(path);
+};
+
 const checkUnits = () => {
   console.log("---------------------Unit Tests----------------------");
   units.forEach((unit) => {
@@ -38,6 +48,7 @@ const checkUnits = () => {
 };
 
 testUnitLines();
+testBfsPaths();
 
 module.exports = {
   checkUnits,

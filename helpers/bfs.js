@@ -1,9 +1,10 @@
+const { cloneArray } = require("./array");
 const { Direction, DirectionsEnum } = require("./directions");
 
 const DIRECTIONS = [
-  new Direction(DirectionsEnum.LEFT),
   new Direction(DirectionsEnum.BOTTOM),
   new Direction(DirectionsEnum.RIGHT),
+  new Direction(DirectionsEnum.LEFT),
   new Direction(DirectionsEnum.TOP),
 ];
 const bfs = (map = [["."]], start = new Point(0, 0), _visited, searchSing = "E", returnOnFirst = false, buildPath = false) => {
@@ -33,7 +34,7 @@ const bfs = (map = [["."]], start = new Point(0, 0), _visited, searchSing = "E",
     visited[current.y][current.x] = time;
     for (let i = 0; i < DIRECTIONS.length; i++) {
       const newCurrent = current.add(DIRECTIONS[i].coordinates);
-      queue.push({ current: newCurrent, time: time + 1, path: path + DIRECTIONS[i].getSign(), visited: [...visited] });
+      queue.push({ current: newCurrent, time: time + 1, path: path + DIRECTIONS[i].getSign(), visited: cloneArray(visited) });
     }
   }
   if (buildPath) {
