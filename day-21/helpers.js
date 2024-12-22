@@ -89,49 +89,6 @@ const findPathForRobot = (ind = 0, map, prevPath = "v>", startPoint = new Point(
   // console.log(ret[0], ret.length);
   return ret;
 };
-
-const calculateScore = (paths = ["<>"], controller) => {
-  const best = { score: 100000, paths: [] };
-  const controllerPaths = preparePaths(controller);
-  for (let i = 0; i < paths.length; i++) {
-    let score = controllerPaths[`A_${paths[i][0]}`];
-    for (let j = 1; j < paths[i].length; j++) {
-      score += controllerPaths[`${paths[i][j - 1]}_${paths[i][j]}`];
-      if (paths[i][j] !== paths[i][j - 1]) {
-        score += 2;
-      }
-      if (paths[i][j - 1] === "<" && paths[i][j] === "v") {
-        score++;
-      }
-      if (paths[i][j - 1] === ">" && paths[i][j] === "^") {
-        score++;
-      }
-      if (paths[i][j - 1] === "^" && paths[i][j] === ">") {
-        score++;
-      }
-      if (paths[i][j - 1] === "A" && paths[i][j] === "<") {
-        score--;
-      }
-      if (paths[i][j - 1] === "A" && paths[i][j] === "^") {
-        score++;
-      }
-    }
-    if (score <= best.score) {
-      if (score === best.score) {
-        best.paths.push(paths[i]);
-      } else {
-        best.paths = [paths[i]];
-      }
-      best.score = score;
-    }
-  }
-  console.log(best.score, best.paths);
-  return best.paths;
-  return paths;
-};
-
-// const deepDiveIntoRobots = ()
-
 module.exports = {
   preparePaths,
   calculateScore,

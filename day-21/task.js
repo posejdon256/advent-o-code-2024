@@ -19,12 +19,13 @@ const part1 = async () => {
   ];
   //<, ^, >, v, A
   const bestPaths = [
+    //A -> < bestPaths[4][0]
     //>_^
-    ["", "v<", "<<", "<", "v<<"], //<
-    [">^", "", "<^", "^", "<"], //^
-    [">>", "v>", "", ">", "v"], //>,
-    [">", "v", "<", "", ">^"], //v
-    [">>^", ">", ">>", ">^", ""], //A
+    ["", "<v", "<<", "<", "v<<"], //<
+    ["^>", "", "<^", "^", "<"], //^
+    [">>", ">v", "", ">", "v"], //>,
+    [">", "v", "<", "", "<v"], //v
+    [">>^", ">", "^", "^>", ""], //A
   ];
   const indexes = {
     "<": 0,
@@ -33,31 +34,58 @@ const part1 = async () => {
     v: 3,
     A: 4,
   };
+  const bestPathsIn13depth = [];
   let sum = 0;
+  //get distances in 12-th depth
+  for (let i = 0; i < 5; i++) {
+    bestPathsIn13depth.push([]);
+    for (let j = 0; j < 5; j++) {
+      let word = bestPaths[i][j];
+      for (let k = 0; k < 12; k++) {
+        let newWord = word.length > 0 ? bestPaths[indexes[word[0]]][indexes["A"]] + "A" : "A";
+        for (let m = 1; m < word.length; m++) {
+          newWord += bestPaths[indexes[word[m]]][indexes[word[m - 1]]] + "A";
+        }
+        word = newWord;
+      }
+      bestPathsIn13depth[i].push({ word, len: word.length });
+    }
+  }
+  console.log(bestPathsIn13depth);
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     let min = 1000000;
     let minWord = "";
+    let minWordPrim = "";
+    let prevMinWord = "";
     let nextPaths = findPathForRobot(0, keyboard, line, new Point(2, 3));
     for (let j = 0; j < nextPaths.length; j++) {
       let nextNextPaths = findPathForRobot(0, controller, nextPaths[j], new Point(2, 0));
       const { minWord: _minWord, minimum } = findMinimumLength(nextNextPaths, controller);
       if (minimum < min) {
         min = minimum;
-        minWord = _minWord;
+        minWord = nextPaths[i];
+        minWordPrim = _minWord;
+        prevMinWord = nextPaths[i];
       }
     }
-    minWord = "<";
-    for (let j = 0; j < 23; j++) {
-      let newWord = bestPaths[indexes["A"]][indexes[minWord[0]]];
-      for (let k = 1; k < minWord.length; k++) {
-        newWord = newWord + bestPaths[indexes[minWord[k]]][indexes[minWord[k - 1]]] + "A";
+    for (let k = 0; k < 12; k++) {
+      // console.log(minWord);
+      let newWord = bestPaths[indexes[minWord[0]]][indexes["A"]] + "A";
+      if (k === 2) {
+        console.log(minWord);
       }
-      console.log("New word", j, minWord.length);
+      for (let j = 1; j < minWord.length; j++) {
+        newWord = newWord + bestPaths[indexes[minWord[j]]][indexes[minWord[j - 1]]] + "A";
+      }
       minWord = newWord;
     }
-    console.log("Word", minWord);
-    sum += min * (line[0] * 100 + line[1] * 10 + line[2] * 1);
+    let bigSum = 0;
+    bigSum += bestPathsIn13depth[indexes[minWord[0]]][indexes["A"]].len + 1;
+    for (let j = 1; j < minWord.length; j++) {
+      bigSum += bestPathsIn13depth[indexes[minWord[j]]][indexes[minWord[j - 1]]].len + 1;
+    }
+    sum += bigSum * (line[0] * 100 + line[1] * 10 + line[2] * 1);
     console.log(min);
   }
   return sum;
