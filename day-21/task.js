@@ -5,7 +5,7 @@ const { preparePaths, findPointIn2D, findPathForRobot, findMinimumLength, calcul
 const { bfs, prepareVisited } = require("../helpers/bfs");
 const { Point } = require("../helpers/points");
 
-const part1 = async () => {
+const part2And1 = async () => {
   const { lines } = await getInputs("test2.txt");
   const keyboard = [
     [7, 8, 9],
@@ -44,6 +44,7 @@ const part1 = async () => {
     sum += bigSum * (line[0] * 100 + line[1] * 10 + line[2] * 1);
     console.log(bigSum);
   }
+  //Result of prt 2
   return sum;
 };
 
@@ -53,7 +54,7 @@ const part2 = async () => {
 };
 
 const main = async () => {
-  await printSolution(part1, part2);
+  console.log(await part2And1());
   checkUnits();
 };
 
