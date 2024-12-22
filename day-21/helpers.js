@@ -1,24 +1,6 @@
 const path = require("path");
 const { prepareVisited, bfs } = require("../helpers/bfs");
 const { Point } = require("../helpers/points");
-
-const preparePaths = (keyboard = [["A"], 1]) => {
-  const possiblePaths = {};
-  for (let i = 0; i < keyboard.length; i++) {
-    for (let j = 0; j < keyboard[0].length; j++) {
-      for (let k = 0; k < keyboard.length; k++) {
-        for (let m = 0; m < keyboard[0].length; m++) {
-          if (keyboard[i][j] !== "#" && keyboard[k][m] !== "#" && keyboard[k][m] !== -1) {
-            const index = `${keyboard[i][j]}_${keyboard[k][m]}`;
-            possiblePaths[index] = Math.abs(i - k) + Math.abs(j - m);
-          }
-        }
-      }
-    }
-  }
-  return possiblePaths;
-};
-
 const findPointIn2D = (map = [["3"]], value = "3") => {
   for (let i = 0; i < map.length; i++) {
     for (let j = 0; j < map[0].length; j++) {
@@ -29,31 +11,6 @@ const findPointIn2D = (map = [["3"]], value = "3") => {
     }
   }
   return new Point(-1, -1);
-};
-
-const findMinimumLength = (paths = ["<>"], controller) => {
-  const controllerPaths = preparePaths(controller);
-  // console.log(controllerPaths);
-  let minimum = 1000000000;
-  let minWord = "";
-  //  console.log(paths.length);
-  for (let i = 0; i < paths.length; i++) {
-    let sum = 0;
-    let index = `A_${paths[i][0]}`;
-    // console.log(index);
-    sum += controllerPaths[index];
-    for (let j = 0; j < paths[i].length - 1; j++) {
-      index = `${paths[i][j]}_${paths[i][j + 1]}`;
-      sum += controllerPaths[index];
-    }
-    sum += paths[i].length;
-    if (sum < minimum) {
-      minimum = sum;
-      minWord = paths[i];
-    }
-  }
-  // console.log("Minimum", minimum);
-  return { minimum, minWord };
 };
 
 const findPathForRobot = (ind = 0, map, prevPath = "v>", startPoint = new Point(0, 0)) => {
@@ -89,10 +46,40 @@ const findPathForRobot = (ind = 0, map, prevPath = "v>", startPoint = new Point(
   // console.log(ret[0], ret.length);
   return ret;
 };
+
+const bestPaths = [
+  //A -> < bestPaths[4][0]
+  //>_^
+  //<   ^     >    v     A
+  ["", "v<", "<<", "<", "v<<"], //<
+  [">^", "", "<^", "^", "<"], //^
+  [">>", "v>", "", ">", "v"], //>,
+  [">", "v", "<", "", "v<"], //v
+  [">>^", ">", "^", ">^", ""], //A
+];
+const indexes = {
+  "<": 0,
+  "^": 1,
+  ">": 2,
+  v: 3,
+  A: 4,
+};
+
+const getWordFromPrevWord = (word = "><", depth = 1) => {
+  for (let k = 0; k < depth; k++) {
+    let newWord = word.length > 0 ? bestPaths[indexes[word[0]]][indexes["A"]] + "A" : "A";
+    for (let m = 1; m < word.length; m++) {
+      newWord += bestPaths[indexes[word[m]]][indexes[word[m - 1]]] + "A";
+    }
+    word = newWord;
+  }
+  return word;
+};
+
 module.exports = {
-  preparePaths,
-  calculateScore,
   findPointIn2D,
   findPathForRobot,
-  findMinimumLength,
+  getWordFromPrevWord,
+  bestPaths,
+  indexes,
 };
