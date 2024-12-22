@@ -13,7 +13,7 @@ const part2 = async () => {
 };
 
 const main = async () => {
-  printSolution(part1, part2);
+  await printSolution(part1, part2);
   checkUnits();
 };
 
