@@ -45,12 +45,7 @@ const part2And1 = async () => {
     console.log(bigSum);
   }
   //Result of prt 2
-  return sum;
-};
-
-const part2 = async () => {
-  const { lines } = await getInputs("test2.txt");
-  return 0;
+  return { part2: sum };
 };
 
 const main = async () => {
