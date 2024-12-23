@@ -26,8 +26,8 @@ const findPathForRobot = (ind = 0, map, prevPath = "v>", startPoint = new Point(
     }
     if (ind >= prevPath.length) {
       if (nextPath.length <= min) {
-        retPaths.push(nextPath);
-        min = nextPath.length;
+        retPaths.push(nextPath === "" ? "A" : nextPath);
+        min = nextPath === "" ? 1 : nextPath.length;
       }
       visited[nextPath] = true;
       continue;

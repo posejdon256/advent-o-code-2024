@@ -5,6 +5,10 @@ const cloneArray = (arr = [[1]]) => {
   }
   return clone;
 };
+function onlyUnique(value, index, array) {
+  return array.indexOf(value) === index;
+}
 module.exports = {
   cloneArray,
+  onlyUnique,
 };
