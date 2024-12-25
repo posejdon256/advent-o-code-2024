@@ -29,7 +29,7 @@ class Gate {
     this.isGood;
   }
   perform(wires) {
-    this.#operation(wires[this.left], wires[this.right]);
+    wires[this.output] = this.#operation(wires[this.left], wires[this.right]);
     this.done = true;
   }
   isGateCorrect(expectedResult, wires) {
@@ -45,6 +45,7 @@ class OperationManager {
   #gates = [];
   constructor() {}
   performGates = () => {
+    //  console.log(this.#gates.length);
     let prev = -1;
     for (let i = 0; i < this.#gates.length; i++) {
       const gate = this.#gates[i];
@@ -67,6 +68,36 @@ class OperationManager {
     const gate = new Gate(parts[1], parts[0], parts[2], parts[4]);
     this.#gates.push(gate);
   };
+  checkWhichBitesreWrong = (coorectZ = "") => {
+    const findOperationForAAndB = (x, A, B, operation) => {
+      return ((x.left === A && x.right === B) || (x.left === B && x.right === A)) && operation === x.getOperation();
+    }; //z14 <-> hbk, kvn <-> z18, cvh <-> tfn, z23 <-> dbb
+    const bad = [];
+    const S = this.#wires[this.#gates.find((x) => findOperationForAAndB(x, "x00", "y00", xor)).output] === parseInt(coorectZ[coorectZ.length - 1]);
+    let cOut = this.#gates.find((x) => findOperationForAAndB(x, "x00", "y00", _and)).output;
+    for (let i = 1; i <= 44; i++) {
+      const A = "x" + (i < 10 ? "0" + i : i);
+      const B = "y" + (i < 10 ? "0" + i : i);
+      const _xor1OutPut = this.#gates.find((x) => findOperationForAAndB(x, A, B, xor)).output;
+      const _and1OutPut = this.#gates.find((x) => findOperationForAAndB(x, A, B, _and)).output;
+      const _xor2Output = this.#gates.find((x) => findOperationForAAndB(x, _xor1OutPut, cOut, xor))?.output;
+      const _and2Output = this.#gates.find((x) => findOperationForAAndB(x, _xor1OutPut, cOut, _and))?.output;
+      console.log(cOut);
+      cOut = this.#gates.find((x) => findOperationForAAndB(x, _and1OutPut, _and2Output, or))?.output;
+      const isSOk =
+        (this.#wires[_xor2Output] === parseInt(coorectZ[coorectZ.length - 1 - i]) || (i > coorectZ.length - 1 && this.#wires[_xor1OutPut] === 0)) &&
+        _xor2Output === "z" + (i < 10 ? "0" + i : i) &&
+        cOut &&
+        _xor2Output &&
+        _and2Output;
+      if (!isSOk) {
+        console.log(A, B, _xor1OutPut, cOut, _xor2Output, this.#wires[_xor1OutPut]);
+        bad.push(i);
+      }
+      console.log("ok", i, isSOk);
+    }
+    console.log(S, cOut);
+  };
   getBitNumberByLetter = (letter = "x") => {
     const sortedKeys = Object.keys(this.#wires)
       .sort()
@@ -79,24 +110,6 @@ class OperationManager {
   };
   getWires() {
     return this.#wires;
-  }
-  getWiresForOutput(wireOutput = "z01", result) {
-    let gate = this.#gates.find((x) => x.output === wireOutput);
-    const wireThree = [];
-    while (gate !== -1) {
-      if (!gate.isGood && !gate.isGateCorrect(result, this.#wires)) {
-        wireThree.push(gate);
-      }
-      gate = gate.baseOn;
-    }
-    return wireThree;
-  }
-  markAsGoodForOutput(wireOutput = "z01") {
-    let gate = this.#gates.find((x) => x.output === wireOutput);
-    while (gate !== -1) {
-      gate.isGood = true;
-      gate = gate.baseOn;
-    }
   }
 }
 

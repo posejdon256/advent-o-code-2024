@@ -4,8 +4,6 @@ const { getInputs } = require("./input");
 
 const part1 = async () => {
   const { keys, locks } = await getInputs("test2.txt");
-  console.log(keys);
-  console.log(locks);
   const locksSizes = [];
   for (let i = 0; i < locks.length; i++) {
     locksSizes.push([]);
