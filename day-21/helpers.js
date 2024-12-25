@@ -51,11 +51,11 @@ const bestPaths = [
   //A -> < bestPaths[4][0]
   //>_^
   //<   ^     >    v     A
-  ["", "v<", "<<", "<", "v<<"], //<
-  [">^", "", "<^", "^", "<"], //^
-  [">>", "v>", "", ">", "v"], //>,
-  [">", "v", "<", "", "v<"], //v
-  [">>^", ">", "^", ">^", ""], //A
+  ["", ">^", ">>", ">", ">>^"], //<
+  ["v<", "", "v>", "v", ">"], //^
+  ["<<", "<^", "", "<", "^"], //>,
+  ["<", "^", ">", "", ">^"], //v
+  ["<v<", "<", "v", "<v", ""], //A
 ];
 const indexes = {
   "<": 0,
@@ -65,21 +65,66 @@ const indexes = {
   A: 4,
 };
 
-const getWordFromPrevWord = (word = "><", depth = 1) => {
+const getWordFromPrevWord = (word = "><", depth = 1, withA = true) => {
+  console.log("WORD", word);
   for (let k = 0; k < depth; k++) {
-    let newWord = word.length > 0 ? bestPaths[indexes[word[0]]][indexes["A"]] + "A" : "A";
+    let newWord = "";
+    if (withA) {
+      newWord = word.length > 0 ? bestPaths[indexes[word[0]]][indexes["A"]] + "A" : "A";
+    }
     for (let m = 1; m < word.length; m++) {
-      newWord += bestPaths[indexes[word[m]]][indexes[word[m - 1]]] + "A";
+      newWord += bestPaths[indexes[word[m - 1]]][indexes[word[m]]] + "A";
+    }
+    if (newWord === "") {
+      newWord = "A";
     }
     word = newWord;
   }
+  console.log("NEW WORD", word);
   return word;
+};
+
+const createGraph = () => {
+  const arr = ["<", ">", "v", "A", "^"];
+  const graph = {};
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = 0; j < arr.length; j++) {
+      const word = getWordFromPrevWord(arr[i] + arr[j], 1, false);
+      const index = arr[i] + arr[j];
+      if (!graph[index]) {
+        graph[index] = [];
+      }
+      if (word.length === 1) {
+        graph[index].push("A");
+      }
+      for (let k = 1; k < word.length; k++) {
+        graph[index].push(word[k - 1] + word[k]);
+      }
+    }
+  }
+  graph["A"] = ["A"];
+  return graph;
+};
+
+const calculateDeepValue = (part = "<<", depth = 0, graph = { "<<": [] }) => {
+  if (depth === 1) {
+    return part.length;
+  }
+  const newParts = graph[part];
+  let value = 0;
+  // console.log(part, depth, newParts);
+  for (let i = 0; i < newParts.length; i++) {
+    value += calculateDeepValue(newParts[i], depth + 1, graph);
+  }
+  return value;
 };
 
 module.exports = {
   findPointIn2D,
   findPathForRobot,
+  createGraph,
   getWordFromPrevWord,
+  calculateDeepValue,
   bestPaths,
   indexes,
 };

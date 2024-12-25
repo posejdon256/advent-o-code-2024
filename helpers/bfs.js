@@ -2,9 +2,9 @@ const { cloneArray } = require("./array");
 const { Direction, DirectionsEnum } = require("./directions");
 
 const DIRECTIONS = [
+  new Direction(DirectionsEnum.LEFT),
   new Direction(DirectionsEnum.BOTTOM),
   new Direction(DirectionsEnum.RIGHT),
-  new Direction(DirectionsEnum.LEFT),
   new Direction(DirectionsEnum.TOP),
 ];
 const bfs = (map = [["."]], start = new Point(0, 0), _visited, searchSing = "E", returnOnFirst = false, buildPath = false) => {
