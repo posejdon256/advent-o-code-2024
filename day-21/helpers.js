@@ -47,16 +47,28 @@ const findPathForRobot = (ind = 0, map, prevPath = "v>", startPoint = new Point(
   return ret;
 };
 
-const bestPaths = [
-  //A -> < bestPaths[4][0]
-  //>_^
-  //<   ^     >    v     A
-  ["", ">^", ">>", ">", ">>^"], //<
-  ["v<", "", "v>", "v", ">"], //^
-  ["<<", "<^", "", "<", "^"], //>,
-  ["<", "^", ">", "", ">^"], //v
-  ["<v<", "<", "v", "<v", ""], //A
-];
+const bestPaths = (depth = 0) => {
+  if (depth < 1) {
+    return [
+      //A -> < bestPaths[4][0]
+      //>_^
+      //<   ^     >    v     A
+      ["", ">^", ">>", ">", ">>^"], //<
+      ["v<", "", "v>", "v", ">"], //^
+      ["<<", "<^", "", "<", "^"], //>,
+      ["<", "^", ">", "", "^>"], //v
+      ["v<<", "<", "v", "<v", ""], //A
+    ];
+  } else {
+    return [
+      ["", ">^", ">>", ">", ">>^"], //<
+      ["v<", "", "v>", "v", ">"], //^
+      ["<<", "<^", "", "<", "^"], //>,
+      ["<", "^", ">", "", ">^"], //v
+      ["<v<", "<", "v", "<v", ""], //A
+    ];
+  }
+};
 const indexes = {
   "<": 0,
   "^": 1,
@@ -65,31 +77,29 @@ const indexes = {
   A: 4,
 };
 
-const getWordFromPrevWord = (word = "><", depth = 1, withA = true) => {
-  console.log("WORD", word);
+const getWordFromPrevWord = (word = "><", depth = 1, withA = true, dddd = 0) => {
   for (let k = 0; k < depth; k++) {
     let newWord = "";
     if (withA) {
-      newWord = word.length > 0 ? bestPaths[indexes[word[0]]][indexes["A"]] + "A" : "A";
+      newWord = word.length > 0 ? bestPaths(dddd)[indexes[word[0]]][indexes["A"]] + "A" : "A";
     }
     for (let m = 1; m < word.length; m++) {
-      newWord += bestPaths[indexes[word[m - 1]]][indexes[word[m]]] + "A";
+      newWord += bestPaths(dddd)[indexes[word[m - 1]]][indexes[word[m]]] + "A";
     }
     if (newWord === "") {
       newWord = "A";
     }
     word = newWord;
   }
-  console.log("NEW WORD", word);
   return word;
 };
 
-const createGraph = () => {
+const createGraph = (depth) => {
   const arr = ["<", ">", "v", "A", "^"];
   const graph = {};
   for (let i = 0; i < arr.length; i++) {
     for (let j = 0; j < arr.length; j++) {
-      const word = getWordFromPrevWord(arr[i] + arr[j], 1, false);
+      const word = getWordFromPrevWord(arr[i] + arr[j], 1, false, depth);
       const index = arr[i] + arr[j];
       if (!graph[index]) {
         graph[index] = [];
@@ -106,16 +116,25 @@ const createGraph = () => {
   return graph;
 };
 
-const calculateDeepValue = (part = "<<", depth = 0, graph = { "<<": [] }) => {
-  if (depth === 1) {
+const calculateDeepValue = (graph, part = "<<", depth = 0, isFirst = false, cache = {}, maxDepth = 2) => {
+  if (depth === maxDepth) {
+    if (!isFirst) {
+      return 1;
+    }
     return part.length;
   }
-  const newParts = graph[part];
+  const connectElement = part[0] === part[1] ? [] : ["A" + graph[part][0][0]];
+  let newParts = isFirst && part !== "A" ? [...graph["A" + part[0]], ...connectElement, ...graph[part]] : graph[part];
+
   let value = 0;
-  // console.log(part, depth, newParts);
-  for (let i = 0; i < newParts.length; i++) {
-    value += calculateDeepValue(newParts[i], depth + 1, graph);
+  const index = `${depth}_${part}_${isFirst}_${part !== "A"}`;
+  if (cache[index]) {
+    return cache[index];
   }
+  for (let i = 0; i < newParts.length; i++) {
+    value += calculateDeepValue(graph, newParts[i], depth + 1, i === 0, cache, maxDepth);
+  }
+  cache[index] = value;
   return value;
 };
 
